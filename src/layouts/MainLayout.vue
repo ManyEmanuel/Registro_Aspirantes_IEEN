@@ -97,6 +97,16 @@
               >
             </q-item-section>
           </q-item>
+          <q-item :to="{ name: 'Usuarios_Registrados' }">
+            <q-item-section avatar>
+              <q-icon name="person" color="purple" />
+            </q-item-section>
+            <q-item-section>
+              <q-item-label class="text-purple label-title text-bold"
+                >Usuarios</q-item-label
+              >
+            </q-item-section>
+          </q-item>
         </div>
       </q-list>
     </q-drawer>
@@ -173,7 +183,7 @@ export default defineComponent({
           router.push({ path: "/vacantes" });
         }
       }
-    };ar
+    };
     comprobar();
     const retorno = async () => {
       window.localStorage.clear();

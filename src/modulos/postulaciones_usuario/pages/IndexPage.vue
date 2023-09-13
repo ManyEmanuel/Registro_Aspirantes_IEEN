@@ -1,14 +1,34 @@
 <template>
   <q-page padding>
-    <div v-if="postulaciones.length > 0" class="row items-start">
+    <q-page-sticky position="bottom-right" :offset="[20, 20]">
+      <q-btn
+        round
+        icon="question_mark"
+        color="blue"
+        text-color="white"
+        size="md"
+        @click="startIntro"
+      >
+        <q-tooltip class="text-body1">Visita guiada</q-tooltip>
+      </q-btn>
+    </q-page-sticky>
+    <div
+      id="postulacionesTour"
+      v-if="postulaciones.length > 0"
+      class="row items-start"
+    >
       <div
         v-for="item in postulaciones"
         :key="item.id"
         class="col-lg-4 col-md-6 col-sm-6 col-xs-12 q-pa-lg"
       >
-        <q-card class="my-card q-hoverable text-center" style="width: 100%">
-          <q-img :src="item.imagen_Url" style="width: 60%" />
-          <q-item>
+        <q-card
+          id="cartaTour"
+          class="my-card q-hoverable text-center"
+          style="width: 100%"
+        >
+          <q-img id="imagenTour" :src="item.imagen_Url" style="width: 60%" />
+          <q-item id="informacionTour">
             <q-item-section class="text-center">
               <q-item-label class="text-weight-bolder">
                 {{ item.nombre }}
@@ -31,7 +51,7 @@
             </q-item-section>
           </q-item>
           <q-item class="text-center">
-            <q-item-section class="text-center">
+            <q-item-section id="verTour" class="text-center">
               <q-btn
                 label="Ver postulación"
                 color="purple"
@@ -40,31 +60,6 @@
               />
             </q-item-section>
           </q-item>
-
-          <q-slide-transition>
-            <div v-show="item.open">
-              <q-separator />
-              <div class="q-pa-lg">
-                <div v-html="item.descripcion"></div>
-              </div>
-              <q-card-section
-                class="text-subitle2 q-hoverable custom-section"
-                @mouseover="item.open = true"
-              >
-                <q-card-actions align="center">
-                  <q-btn
-                    label="Ver avance de postulación"
-                    color="purple"
-                    icon="visibility"
-                    @click="verAvance(item.id)"
-                    style="width: 50%"
-                  >
-                    <q-tooltip>Ver avance</q-tooltip></q-btn
-                  >
-                </q-card-actions>
-              </q-card-section>
-            </div>
-          </q-slide-transition>
         </q-card>
       </div>
     </div>
@@ -95,6 +90,8 @@ import { useQuasar } from "quasar";
 import { usePostulacionesUsuario } from "../../../store/postulaciones_usuario_store";
 import { useRegistroVacante } from "../../../store/registro_vacantes_store";
 import { useDatosCiudadanosStore } from "../../../store/datos_ciudadanos_store";
+import introJs from "intro.js";
+import "intro.js/introjs.css";
 
 const $q = useQuasar();
 const router = useRouter();
@@ -120,6 +117,54 @@ const verAvance = async (id) => {
   //await registroVacanteStore.loadVacante(id);
   //await postulacionesUsuarioStore.loadAvancePostulacion(id);
   router.push({ path: "/postulacion", query: { id: id } });
+};
+
+const startIntro = () => {
+  const intro = introJs();
+
+  intro.setOptions({
+    showProgress: true,
+    nextLabel: "Siguiente",
+    prevLabel: "Anterior",
+    doneLabel: "Hecho",
+    steps: [
+      {
+        intro:
+          "👋 Bienvenido al asistente 🤖 de Registro de vacantes. Esta es la sección de 'Mis Postulaciones'.",
+      },
+      {
+        element: "#postulacionesTour",
+        intro:
+          "En este apartado se mostrarán las vacantes a las cuales te has postulado",
+      },
+      {
+        element: "#cartaTour",
+        intro:
+          "En esta tarjeta informativa encontraras la información, estatus y acceso de tu postulación.",
+      },
+      {
+        element: "#imagenTour",
+        intro: "Imagen ilustrativa de la vacante a la cual te has postulado.",
+      },
+      {
+        element: "#informacionTour",
+        intro:
+          "Esta sección contiene la siguiente información: Cargo al cual te has postulado y estatus actual de tu solicitud.",
+      },
+      {
+        element: "#verTour",
+        intro:
+          "Este botón te llevará al siguiente apartado para realizar la carga de los documentos requeridos, así como conocer el estatus de cada uno de ellos. Cuando des clic, me encontrarás allá para darte más información.",
+      },
+      {
+        intro:
+          "Espero que esta información te haya sido de gran utilidad. Recuerda que estoy a tu disposición en todo momento en el botón de ayuda 👋 🤖",
+      },
+      // Add more steps as needed
+    ],
+  });
+
+  intro.start();
 };
 
 const postularme = async () => {

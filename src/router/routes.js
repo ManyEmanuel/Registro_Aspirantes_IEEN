@@ -75,6 +75,12 @@ const routes = [
         component: () =>
           import("../modulos/calendario_postulantes/pages/IndexPage.vue"),
       },
+      {
+        path: "/Usuarios_Registrados",
+        name: "Usuarios_Registrados",
+        component: () =>
+          import("../modulos/usuarios_Vacantes/pages/IndexPage.vue"),
+      },
     ],
   },
 

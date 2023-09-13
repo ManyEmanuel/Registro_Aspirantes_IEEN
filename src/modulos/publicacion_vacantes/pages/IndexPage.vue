@@ -1,13 +1,27 @@
 <template>
   <q-page padding>
-    <div v-if="listVacantes.length > 0" class="row items-start">
+    <q-page-sticky position="bottom-right" :offset="[20, 20]">
+      <q-btn
+        round
+        icon="question_mark"
+        color="blue"
+        text-color="white"
+        size="md"
+        @click="startIntro"
+      >
+        <q-tooltip class="text-body1">Visita guiada</q-tooltip>
+      </q-btn>
+    </q-page-sticky>
+
+    <div v-if="listVacantes.length > 0" class="row items-start" id="pageTour">
       <div
         v-for="items in listVacantes"
         :key="items.id"
         class="col-lg-4 col-md-6 col-sm-6 col-xs-12 q-pa-lg"
       >
-        <q-card class="my-card q-hoverable" style="width: 100%">
+        <q-card id="cartaTour" class="my-card q-hoverable" style="width: 100%">
           <q-img
+            id="imagenTour"
             :transition="'flip-right'"
             :src="items.imagen_Url"
             ratio="1"
@@ -29,7 +43,7 @@
           <q-slide-transition>
             <div v-show="items.open">
               <q-separator />
-              <div class="q-pa-lg">
+              <div class="q-pa-lg" id="descripcionTour">
                 <div v-html="items.descripcion"></div>
               </div>
 
@@ -38,10 +52,12 @@
                 @mouseover="items.open = true"
               >
                 <q-card-actions
+                  id="accionesTour"
                   :vertical="$q.screen.width <= 1700 ? true : false"
                   :align="formatoBotones"
                 >
                   <q-btn
+                    id="convocatoriaTour"
                     label="Ver convocatoria"
                     color="purple"
                     icon="visibility"
@@ -51,7 +67,7 @@
                   >
                   <q-space> </q-space>
                   <br />
-                  <div v-if="checkComplete">
+                  <div id="estatusTour" v-if="checkComplete">
                     <q-btn
                       v-if="items.estatus == false"
                       label="Postularme"
@@ -73,7 +89,7 @@
                       ></q-btn
                     >
                   </div>
-                  <div v-else>
+                  <div v-else id="estatusTour">
                     <q-badge outline color="red" align="middle">
                       Datos de perfil incompleto
                     </q-badge>
@@ -135,6 +151,8 @@ import { usePublicacionVacante } from "../../../store/publicacion_vacante_store"
 import { useRegistroVacante } from "../../../store/registro_vacantes_store";
 import { useDatosCiudadanosStore } from "../../../store/datos_ciudadanos_store";
 import { usePostulacionesUsuario } from "src/store/postulaciones_usuario_store";
+import introJs from "intro.js";
+import "intro.js/introjs.css";
 
 const $q = useQuasar();
 const router = useRouter();
@@ -168,6 +186,85 @@ watch($q.screen, (val) => {
 
 const verVacante = async (url) => {
   window.open(url, "_blank");
+};
+
+const startIntro = () => {
+  const intro = introJs();
+  const updatedArray = listVacantes.value.map((obj) => {
+    return { ...obj, open: true };
+  });
+  listVacantes.value = updatedArray;
+  intro.setOptions({
+    showProgress: true,
+    nextLabel: "Siguiente",
+    prevLabel: "Anterior",
+    doneLabel: "Hecho",
+    steps: [
+      {
+        intro:
+          "👋 Bienvenido al asistente 🤖 de Registro de vacantes. Estas en la sección de vacantes disponibles.",
+      },
+      {
+        element: "#pageTour",
+        intro:
+          "Aquí se mostrarán las convocatorias de las vacantes disponibles.",
+        position: "bottom",
+      },
+      {
+        element: "#cartaTour",
+        intro:
+          "En esta tarjeta informativa encontraras la información relacionada con la vacante y se comprende de 3 secciones.",
+      },
+      {
+        element: "#imagenTour",
+        intro: "Imagen ilustrativa de la vacante.",
+      },
+      {
+        element: "#descripcionTour",
+        intro: "Descripción breve de la vacante.",
+      },
+      {
+        element: "#accionesTour",
+        intro:
+          "La siguiente sección corresponde a las acciones que se pueden realizar.",
+      },
+      {
+        element: "#convocatoriaTour",
+        intro: "Enlace para mostrar la convocatoria completa.",
+      },
+      {
+        element: "#estatusTour",
+        intro:
+          "En este apartado te muestra el estatus actual. Primero 'Datos de perfil incompleto', en este caso recurrir a la opción 1 del menú lateral izquierdo (Mi Perfil)",
+      },
+      {
+        element: "#estatusTour",
+        intro:
+          "Una vez completos los datos, se habilitará la opción de 'Postularme', el cual desprenderá la lista de los municipios disponibles, seleccionar el que desee y listo, quedará postulado.",
+      },
+      {
+        element: "#estatusTour",
+        intro:
+          "Y por último un botón deshabilitado con la leyenda 'Ya Postulado', el cual nos indicara que ya se está postulado para dicha vacante",
+      },
+      {
+        element: "#pageTour",
+        intro:
+          "Espero que esta información te haya sido de gran utilidad. Recuerda que estoy a tu disposición en todo momento en el botón de ayuda 👋 🤖",
+      },
+      // Add more steps as needed
+    ],
+  });
+
+  intro.start();
+};
+
+const RegresarSeccion = () => {
+  const updatedArray = listVacantes.value.map((obj) => {
+    return { ...obj, open: false };
+  });
+  listVacantes.value = updatedArray;
+  console.log("Esto es updateArraySalidaStep", updatedArray);
 };
 
 const oficinaSeleccion = async (id) => {
