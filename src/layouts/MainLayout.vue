@@ -107,6 +107,16 @@
               >
             </q-item-section>
           </q-item>
+          <q-item :to="{ name: 'Dashboard' }">
+            <q-item-section avatar>
+              <q-icon name="analytics" color="purple" />
+            </q-item-section>
+            <q-item-section>
+              <q-item-label class="text-purple label-title text-bold"
+                >Dashboard</q-item-label
+              >
+            </q-item-section>
+          </q-item>
         </div>
       </q-list>
     </q-drawer>
