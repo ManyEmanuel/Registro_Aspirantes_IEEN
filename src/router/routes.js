@@ -81,6 +81,11 @@ const routes = [
         component: () =>
           import("../modulos/usuarios_Vacantes/pages/IndexPage.vue"),
       },
+      {
+        path: "/Dashboard",
+        name: "Dashboard",
+        component: () => import("../modulos/dashboard/pages/IndexPage.vue"),
+      },
     ],
   },
 
