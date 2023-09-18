@@ -20,13 +20,9 @@ const props = defineProps({
   },
 });
 
-console.log(props.vacanteId);
-
 const registro_filtro = dashboard.value.registro_Vacante.find(
   (x) => x.vacante_Id == props.vacanteId
 );
-
-console.log(registro_filtro);
 
 const rellena_grafica_tarjeta = () => {
   series.push({

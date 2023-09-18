@@ -12,8 +12,6 @@ const dasboadrStore = useDashboard();
 const { dashboard } = storeToRefs(dasboadrStore);
 
 const series = [];
-const seriesDataCons = [];
-const seriesDataSec = [];
 const categorias = [];
 const consejeros = dashboard.value.solicitudes_Oficina.map(
   (x) => x.solicitudes_Consejeros
@@ -39,9 +37,6 @@ series.push(
     data: secretarios,
   }
 );
-
-console.log(consejeros, secretarios);
-
 rellena_grafica_tarjeta();
 
 const chartOptions = {
@@ -49,6 +44,7 @@ const chartOptions = {
     type: "bar",
     height: 350,
   },
+  colors: ["#008FFB", "#00E396"],
   plotOptions: {
     bar: {
       horizontal: false,
@@ -62,7 +58,6 @@ const chartOptions = {
   stroke: {
     show: true,
     width: 2,
-    colors: ["transparent"],
   },
   xaxis: {
     categories: categorias,
