@@ -32,6 +32,7 @@ const registro_filtro = dashboard.value.registro_Vacante.find(
 );
 
 const rellena_grafica_tarjeta = () => {
+  console.log(registro_filtro.vacante);
   series.push(
     {
       name: "Femenino",
@@ -99,6 +100,15 @@ const chartOptions = {
   },
   xaxis: {
     categories: ["Pendientes", "Completas"],
+  },
+  title: {
+    text: registro_filtro.vacante,
+    style: {
+      fontSize: "19px",
+      fontWeight: "bold",
+      fontFamily: undefined,
+      color: "#263238",
+    },
   },
   legend: {
     position: "bottom",

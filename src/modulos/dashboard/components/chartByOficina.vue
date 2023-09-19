@@ -61,6 +61,15 @@ const chartOptions = {
   xaxis: {
     categories: categorias,
   },
+  title: {
+    text: "Total de registros por municipio",
+    style: {
+      fontSize: "18px",
+      fontWeight: "bold",
+      fontFamily: undefined,
+      color: "#263238",
+    },
+  },
   yaxis: {},
   fill: {
     opacity: 1,
