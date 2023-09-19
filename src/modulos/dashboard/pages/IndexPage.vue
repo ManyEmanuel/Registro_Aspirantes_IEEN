@@ -1,6 +1,6 @@
 <template>
   <q-page padding>
-    <div class="row q-pb-md">
+    <!-- <div class="row q-pb-md">
       <div class="col-3">
         <q-select
           rounded
@@ -19,7 +19,7 @@
           label="Seleccione"
         />
       </div>
-    </div>
+    </div> -->
     <div class="row">
       <template v-if="dashboard">
         <div class="col-lg-4 col-md-12 col-sm-12 col-xs-12">
@@ -55,17 +55,21 @@
       </template>
     </div>
     <br />
+    <div class="row bg-grey-5" style="border-radius: 5px; color: white">
+      <div class="text-h6 q-pl-md">CONSEJERÍAS POSTULADAS</div>
+    </div>
     <div class="row">
       <div class="col">
-        <q-virtual-scroll
-          :items="heavyList"
-          virtual-scroll-horizontal
-          v-slot="{ item, index }"
-        >
-          <div :key="index" :class="item.class">
-            <chartByGenero />
-          </div>
-        </q-virtual-scroll>
+        <chartByGenero :vacante="1" />
+      </div>
+    </div>
+    <br />
+    <div class="row bg-grey-5" style="border-radius: 5px; color: white">
+      <div class="text-h6 q-pl-md">SECRETARÍAS POSTULADAS</div>
+    </div>
+    <div class="row">
+      <div class="col">
+        <chartByGenero :vacante="2" />
       </div>
     </div>
   </q-page>
@@ -95,7 +99,6 @@ for (let i = 0; i < maxSize; i++) {
 
 onBeforeMount(() => {
   dasboadrStore.loadDashboard();
-  dasboadrStore.loadOficinas();
 });
 </script>
 

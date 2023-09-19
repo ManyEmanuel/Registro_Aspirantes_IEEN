@@ -5,6 +5,7 @@ export const useDashboard = defineStore("dashboard", {
   state: () => ({
     dashboard: null,
     listOficinas: [],
+    listSolicitudes: [],
     oficina: null,
   }),
   actions: {
@@ -14,7 +15,6 @@ export const useDashboard = defineStore("dashboard", {
         let resp = await api.get("/Dasboard");
         let { data } = resp.data;
         this.dashboard = data;
-        console.log("this", this.dashboard);
       } catch (error) {
         return {
           success: false,
@@ -58,8 +58,5 @@ export const useDashboard = defineStore("dashboard", {
       }
     },
     //-----------------------------------------------------------
-    // async actualizarOficina(oficina) {
-    //   this.oficina = oficina;
-    // },
   },
 });

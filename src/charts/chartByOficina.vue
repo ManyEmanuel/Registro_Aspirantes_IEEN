@@ -29,11 +29,11 @@ const rellena_grafica_tarjeta = () => {
 
 series.push(
   {
-    name: "Consejeros",
+    name: "Consejerías",
     data: consejeros,
   },
   {
-    name: "Secretarios",
+    name: "Secretarías",
     data: secretarios,
   }
 );
@@ -44,7 +44,6 @@ const chartOptions = {
     type: "bar",
     height: 350,
   },
-  colors: ["#008FFB", "#00E396"],
   plotOptions: {
     bar: {
       horizontal: false,
