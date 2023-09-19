@@ -30,9 +30,9 @@
             flat
             bordered
           >
-            <q-card-section>
+            <!-- <q-card-section>
               <div class="text-h6 text-center">{{ registro.vacante }}</div>
-            </q-card-section>
+            </q-card-section> -->
             <q-card-section horizontal>
               <q-card-section class="">
                 <br />
