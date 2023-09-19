@@ -6,7 +6,7 @@
 
 <script setup>
 import { storeToRefs } from "pinia";
-import { useDashboard } from "../store/dashboard_store";
+import { useDashboard } from "../../../store/dashboard_store";
 
 const dasboadrStore = useDashboard();
 const { dashboard } = storeToRefs(dasboadrStore);
