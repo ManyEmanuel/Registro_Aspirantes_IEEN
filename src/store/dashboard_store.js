@@ -30,14 +30,14 @@ export const useDashboard = defineStore("dashboard", {
         let { data } = resp.data;
         let listOficinas = data.map((oficina) => {
           return {
-            id: oficina.id,
+            value: oficina.id,
             label: oficina.nombre,
           };
         });
         //Agrega todos a la lista
         listOficinas.splice(0, 0, {
           value: 0,
-          label: "Todos",
+          label: "Estatal",
         });
 
         //busca la oficina y la quita de la lista

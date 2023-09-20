@@ -8,11 +8,15 @@
 import { storeToRefs } from "pinia";
 import { useDashboard } from "../../../store/dashboard_store";
 
+//--------------------------------------------------------------
+
 const dasboadrStore = useDashboard();
 const { dashboard } = storeToRefs(dasboadrStore);
-
 const series = [];
 const categorias = [];
+
+//--------------------------------------------------------------
+
 const consejeros = dashboard.value.solicitudes_Oficina.map(
   (x) => x.solicitudes_Consejeros
 );
@@ -47,12 +51,23 @@ const chartOptions = {
   plotOptions: {
     bar: {
       horizontal: false,
-      columnWidth: "55%",
+      columnWidth: "95%",
       endingShape: "rounded",
+      dataLabels: {
+        position: "top",
+      },
     },
   },
   dataLabels: {
-    enabled: false,
+    enabled: true,
+    formatter: function (val) {
+      return val;
+    },
+    offsetY: -20,
+    style: {
+      fontSize: "12px",
+      colors: ["#304758"],
+    },
   },
   stroke: {
     show: true,
@@ -71,6 +86,9 @@ const chartOptions = {
     },
   },
   yaxis: {},
+  legend: {
+    fontSize: "20px",
+  },
   fill: {
     opacity: 1,
   },

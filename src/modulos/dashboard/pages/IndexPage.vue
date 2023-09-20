@@ -6,17 +6,8 @@
           <q-select
             rounded
             outlined
-            v-model="model"
+            v-model="municipio"
             :options="listOficinas"
-            label="Seleccione"
-          />
-        </div>
-        <div class="col-3 q-pl-md">
-          <q-select
-            rounded
-            outlined
-            v-model="modelEstatus"
-            :options="optionsEstatus"
             label="Seleccione"
           />
         </div>
@@ -30,9 +21,6 @@
             flat
             bordered
           >
-            <!-- <q-card-section>
-              <div class="text-h6 text-center">{{ registro.vacante }}</div>
-            </q-card-section> -->
             <q-card-section horizontal>
               <q-card-section class="">
                 <br />
@@ -44,13 +32,18 @@
               </q-card-section>
 
               <q-card-section class="col-8 flex flex-center">
-                <dashboard1 :vacanteId="registro.vacante_Id" />
+                <chartGeneroGeneral
+                  v-if="municipio.label == 'Estatal'"
+                  :vacanteId="registro.vacante_Id"
+                />
+                <chartGeneroMunicipio v-else :vacanteId="registro.vacante_Id" />
               </q-card-section>
             </q-card-section>
           </q-card>
         </div>
         <div class="col-lg-8 col-md-12 col-sm-12 col-xs-12">
-          <chartByOficina />
+          <chartByOficina v-if="municipio.label == 'Estatal'" />
+          <chartRangoEdad v-else />
         </div>
       </div>
       <br />
@@ -77,21 +70,23 @@
 <script setup>
 import { storeToRefs } from "pinia";
 import { useQuasar } from "quasar";
-import { onBeforeMount, ref } from "vue";
+import { onBeforeMount, ref, watch } from "vue";
 import { useDashboard } from "../../../store/dashboard_store";
-import dashboard1 from "../components/dashboard1.vue";
+import chartGeneroGeneral from "../components/chartGeneroGeneral.vue";
 import chartByOficina from "../components/chartByOficina.vue";
 import chartByGenero from "../components/chartByGenero.vue";
+import chartRangoEdad from "../components/chartRangoEdad.vue";
+import chartGeneroMunicipio from "../components/chartGeneroMunicipio.vue";
 
 const $q = useQuasar();
 const dasboadrStore = useDashboard();
 const { dashboard, listOficinas } = storeToRefs(dasboadrStore);
-const model = ref("Todos");
-const modelEstatus = ref("Todos");
-const optionsEstatus = ["Todos", "Pendientes", "Completados"];
+const municipio = ref(null);
 
 onBeforeMount(() => {
   dasboadrStore.loadDashboard();
+  dasboadrStore.loadOficinas();
+  municipio.value = { value: 0, label: "Estatal" };
 });
 </script>
 

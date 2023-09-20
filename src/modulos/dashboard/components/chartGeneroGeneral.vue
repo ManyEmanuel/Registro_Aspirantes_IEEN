@@ -32,7 +32,6 @@ const registro_filtro = dashboard.value.registro_Vacante.find(
 );
 
 const rellena_grafica_tarjeta = () => {
-  console.log(registro_filtro.vacante);
   series.push(
     {
       name: "Femenino",
