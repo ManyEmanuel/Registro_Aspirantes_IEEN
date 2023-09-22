@@ -2,7 +2,7 @@
   <div id="chart">
     <apexchart
       type="bar"
-      height="350"
+      height="250"
       :options="chartOptions"
       :series="series"
     ></apexchart>
@@ -10,6 +10,28 @@
 </template>
 
 <script setup>
+import { storeToRefs } from "pinia";
+import { useDashboard } from "../../../store/dashboard_store";
+
+//--------------------------------------------------------------
+
+const dasboadrStore = useDashboard();
+const { dashboard } = storeToRefs(dasboadrStore);
+//const series = [];
+const props = defineProps({
+  oficina: {
+    type: String,
+  },
+  vacanteId: {
+    type: Number,
+    default: 100,
+  },
+});
+//--------------------------------------------------------------
+
+const registro_filtro = dashboard.value.registro_Vacante.find(
+  (x) => x.vacante_Id == props.vacanteId
+);
 const series = [
   {
     name: "PRODUCT A",
@@ -27,10 +49,15 @@ const series = [
 const chartOptions = {
   chart: {
     type: "bar",
-    height: 350,
     stacked: true,
-    stackType: "100%",
+    toolbar: {
+      show: true,
+    },
+    zoom: {
+      enabled: true,
+    },
   },
+  colors: ["#d1308a", "#863399", "#76777a"],
   responsive: [
     {
       breakpoint: 480,
@@ -43,16 +70,38 @@ const chartOptions = {
       },
     },
   ],
+  plotOptions: {
+    bar: {
+      horizontal: false,
+      borderRadius: 10,
+      dataLabels: {
+        total: {
+          enabled: true,
+          style: {
+            fontSize: "13px",
+            fontWeight: 200,
+          },
+        },
+      },
+    },
+  },
   xaxis: {
-    categories: ["2011 Q1", "2011 Q2"],
+    categories: ["Pendientes", "Completas"],
+  },
+  // title: {
+  //   text: registro_filtro.vacante,
+  //   style: {
+  //     fontSize: "19px",
+  //     fontWeight: "bold",
+  //     fontFamily: undefined,
+  //     color: "#263238",
+  //   },
+  // },
+  legend: {
+    position: "bottom",
   },
   fill: {
     opacity: 1,
-  },
-  legend: {
-    position: "right",
-    offsetX: 0,
-    offsetY: 50,
   },
 };
 </script>

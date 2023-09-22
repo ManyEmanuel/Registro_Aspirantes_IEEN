@@ -11,13 +11,14 @@
 
 <script setup>
 import { storeToRefs } from "pinia";
+import { ref, watch } from "vue";
 import { useDashboard } from "../../../store/dashboard_store";
 
 //--------------------------------------------------------------
 
 const dasboadrStore = useDashboard();
 const { dashboard } = storeToRefs(dasboadrStore);
-const series = [];
+const series = ref([]);
 const props = defineProps({
   vacanteId: {
     type: Number,
@@ -26,13 +27,20 @@ const props = defineProps({
 });
 
 //--------------------------------------------------------------
+watch(dashboard, (val) => {
+  const registro_filtro = dashboard.value.registro_Vacante.find(
+    (x) => x.vacante_Id == props.vacanteId
+  );
+  series.value = [];
+  rellena_grafica_tarjeta(registro_filtro);
+});
 
 const registro_filtro = dashboard.value.registro_Vacante.find(
   (x) => x.vacante_Id == props.vacanteId
 );
 
-const rellena_grafica_tarjeta = () => {
-  series.push(
+const rellena_grafica_tarjeta = (registro_filtro) => {
+  series.value.push(
     {
       name: "Femenino",
       data: [
@@ -56,7 +64,7 @@ const rellena_grafica_tarjeta = () => {
     }
   );
 };
-rellena_grafica_tarjeta();
+rellena_grafica_tarjeta(registro_filtro);
 
 const chartOptions = {
   chart: {
@@ -111,6 +119,7 @@ const chartOptions = {
   },
   legend: {
     position: "bottom",
+    fontSize: "14px",
   },
   fill: {
     opacity: 1,

@@ -6,15 +6,18 @@ export const useDashboard = defineStore("dashboard", {
     dashboard: null,
     listOficinas: [],
     listSolicitudes: [],
+    oficinaRangoEdad: null,
     oficina: null,
   }),
   actions: {
     //-----------------------------------------------------------
-    async loadDashboard() {
+    async loadDashboard(id) {
       try {
-        let resp = await api.get("/Dasboard");
+        let ruta = id == 0 ? "/Dasboard" : `/Dasboard?Oficina_Id=${id}`;
+        let resp = await api.get(ruta);
         let { data } = resp.data;
         this.dashboard = data;
+        console.log("this", this.dashboard);
       } catch (error) {
         return {
           success: false,

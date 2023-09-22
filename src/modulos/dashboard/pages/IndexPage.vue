@@ -1,7 +1,7 @@
 <template>
   <q-page padding>
     <template v-if="dashboard">
-      <!-- <div class="row q-pb-md">
+      <div class="row q-pb-md">
         <div class="col-3">
           <q-select
             rounded
@@ -11,7 +11,11 @@
             label="Seleccione"
           />
         </div>
-      </div> -->
+      </div>
+      <div class="row bg-grey-5" style="border-radius: 5px; color: white">
+        <div class="text-h6 q-pl-md">{{ municipio.label }}</div>
+      </div>
+      <br />
       <div class="row">
         <div class="col-lg-4 col-md-12 col-sm-12 col-xs-12">
           <q-card
@@ -32,11 +36,7 @@
               </q-card-section>
 
               <q-card-section class="col-8 flex flex-center">
-                <chartGeneroGeneral
-                  v-if="municipio.label == 'Estatal'"
-                  :vacanteId="registro.vacante_Id"
-                />
-                <chartGeneroMunicipio v-else :vacanteId="registro.vacante_Id" />
+                <chartGeneroGeneral :vacanteId="registro.vacante_Id" />
               </q-card-section>
             </q-card-section>
           </q-card>
@@ -76,7 +76,6 @@ import chartGeneroGeneral from "../components/chartGeneroGeneral.vue";
 import chartByOficina from "../components/chartByOficina.vue";
 import chartByGenero from "../components/chartByGenero.vue";
 import chartRangoEdad from "../components/chartRangoEdad.vue";
-import chartGeneroMunicipio from "../components/chartGeneroMunicipio.vue";
 
 const $q = useQuasar();
 const dasboadrStore = useDashboard();
@@ -87,6 +86,10 @@ onBeforeMount(() => {
   dasboadrStore.loadDashboard();
   dasboadrStore.loadOficinas();
   municipio.value = { value: 0, label: "Estatal" };
+});
+
+watch(municipio, (val) => {
+  dasboadrStore.loadDashboard(val.value);
 });
 </script>
 
