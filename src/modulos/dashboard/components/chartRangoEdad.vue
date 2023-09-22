@@ -1,91 +1,120 @@
 <template>
   <div id="chart">
-    <apexchart
-      type="line"
-      height="350"
-      :options="chartOptions"
-      :series="series"
-    ></apexchart>
+    <apexchart type="bar" :options="chartOptions" :series="series"></apexchart>
   </div>
 </template>
 
 <script setup>
 import { storeToRefs } from "pinia";
+import { ref, watch } from "vue";
 import { useDashboard } from "../../../store/dashboard_store";
 
 //--------------------------------------------------------------
 
 const dashboardStore = useDashboard();
 const { dashboard } = storeToRefs(dashboardStore);
+const series = ref([]);
 
 //--------------------------------------------------------------
 
-const series = [
-  {
-    name: "Consejerías",
-    data: [28, 29, 33, 36, 32, 32],
-  },
-  {
-    name: "Secretarías",
-    data: [12, 11, 14, 18, 17, 13],
-  },
-];
+const rellena = () => {
+  const consejeriaFemenino = dashboard.value.solicitudes_Consejeria_Genero.map(
+    (x) => x.femenino
+  );
+
+  const consejeriaMasculino = dashboard.value.solicitudes_Consejeria_Genero.map(
+    (x) => x.masculino
+  );
+
+  const consejeriaNoBinario = dashboard.value.solicitudes_Consejeria_Genero.map(
+    (x) => x.no_Binario
+  );
+
+  const secretariaFemenino = dashboard.value.solicitudes_Secretaria_Genero.map(
+    (x) => x.femenino
+  );
+
+  const secretariaMasculino = dashboard.value.solicitudes_Secretaria_Genero.map(
+    (x) => x.masculino
+  );
+
+  const secretariaNoBinario = dashboard.value.solicitudes_Secretaria_Genero.map(
+    (x) => x.no_Binario
+  );
+  series.value.push(
+    {
+      name: "Con-F",
+      group: "consejeria",
+      data: consejeriaFemenino,
+    },
+    {
+      name: "Sec-F",
+      group: "secretaria",
+      data: secretariaFemenino,
+    },
+    {
+      name: "Con-M",
+      group: "consejeria",
+      data: consejeriaMasculino,
+    },
+    {
+      name: "Sec-M",
+      group: "secretaria",
+      data: secretariaMasculino,
+    },
+    {
+      name: "Con-NB",
+      group: "consejeria",
+      data: consejeriaNoBinario,
+    },
+    {
+      name: "Sec-NB",
+      group: "secretaria",
+      data: secretariaNoBinario,
+    }
+  );
+};
+watch(dashboard, () => {
+  series.value = [];
+  rellena();
+});
+
 const chartOptions = {
   chart: {
+    type: "bar",
     height: 350,
-    type: "line",
-    dropShadow: {
-      enabled: true,
-      color: "#000",
-      top: 18,
-      left: 7,
-      blur: 10,
-      opacity: 0.2,
-    },
-    toolbar: {
-      show: false,
-    },
-  },
-  colors: ["#77B6EA", "#545454"],
-  dataLabels: {
-    enabled: true,
+    stacked: true,
   },
   stroke: {
-    curve: "smooth",
+    width: 1,
+    colors: ["#fff"],
   },
-  title: {
-    text: "Rango de edades",
-    align: "left",
-  },
-  grid: {
-    borderColor: "#e7e7e7",
-    row: {
-      colors: ["#f3f3f3", "transparent"], // takes an array which will be repeated on columns
-      opacity: 0.5,
+  dataLabels: {},
+  plotOptions: {
+    bar: {
+      horizontal: false,
     },
-  },
-  markers: {
-    size: 1,
   },
   xaxis: {
     categories: ["18-24", "25-29", "30-39", "40-49", "50-59", "60 o más"],
-    title: {
-      text: "Rango de edades",
+  },
+  title: {
+    text: "Total de registros por rango de edad y género",
+    style: {
+      fontSize: "18px",
+      fontWeight: "bold",
+      fontFamily: undefined,
+      color: "#263238",
     },
   },
-  yaxis: {
-    title: {
-      text: "Cantidad",
-    },
-    min: 5,
-    max: 40,
+  fill: {
+    opacity: 1,
   },
+  colors: ["#d1308a", "#fe89bf", "#863399", "#b684c1", "#76777a", "#babbbc"],
+  yaxis: {},
   legend: {
-    position: "top",
-    horizontalAlign: "right",
-    floating: true,
-    offsetY: -25,
-    offsetX: -5,
+    position: "bottom",
+    fontSize: "16px",
   },
 };
 </script>
