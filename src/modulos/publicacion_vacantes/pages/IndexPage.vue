@@ -330,6 +330,8 @@ const postularme = async () => {
       });
       //loading.value = false;
     }
+    await publicacionVacanteStore.loadVacantesPublicados();
+    dialogMunicipio.value = false;
     $q.loading.hide();
   });
 };

@@ -93,6 +93,7 @@ export const usePublicacionVacante = defineStore("publicacionVacante", {
         let resp = await api.get(
           `/SolicitudesVacantes/Solicitar/${vacante}/${oficina}`
         );
+
         if (resp.status == 200) {
           const { success, data } = resp.data;
           if (success === true) {
