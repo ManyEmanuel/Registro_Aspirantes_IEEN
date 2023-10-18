@@ -8,7 +8,7 @@ import axios from "axios";
 // "export default () => {}" function below (which runs individually
 // for each client)
 const api = axios.create({
-  baseURL: "http://sistema.ieenayarit.org:9470/api",
+  baseURL: "http://sistema.ieenayarit.org:9370/api",
   //baseURL: "http://192.168.2.110:9370/api",
 });
 //const api = axios.create({ baseURL: "https://sistema.ieenayarit.org:9270/api" });
@@ -27,7 +27,7 @@ api.interceptors.response.use(
     if (error.response.status === 401) {
       alert("Su sesión ha expirado, sera redireccionado al logín");
       window.localStorage.clear();
-      window.location = "http://sistema.ieenayarit.org:9471?return=false";
+      window.location = "http://sistema.ieenayarit.org:9371?return=false";
       //window.location = "http://localhost:8080?return=false";
     }
     return Promise.reject(error);
