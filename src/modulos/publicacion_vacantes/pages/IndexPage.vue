@@ -67,31 +67,38 @@
                   >
                   <q-space> </q-space>
                   <br />
-                  <div id="estatusTour" v-if="checkComplete">
-                    <q-btn
-                      v-if="items.estatus == false"
-                      label="Postularme"
-                      color="purple"
-                      icon="hail"
-                      @click="oficinaSeleccion(items.id)"
-                    >
-                      <q-tooltip> Postularme a la vacante</q-tooltip></q-btn
-                    >
-                    <q-btn
-                      v-else-if="items.estatus == true"
-                      disable=""
-                      label="Ya postulado"
-                      color="purple"
-                      icon="hail"
-                    >
-                      <q-tooltip>
-                        Ya postulado para la vacante</q-tooltip
-                      ></q-btn
-                    >
+                  <div v-if="items.activo == true">
+                    <div id="estatusTour" v-if="checkComplete">
+                      <q-btn
+                        v-if="items.estatus == false"
+                        label="Postularme"
+                        color="purple"
+                        icon="hail"
+                        @click="oficinaSeleccion(items.id)"
+                      >
+                        <q-tooltip> Postularme a la vacante</q-tooltip></q-btn
+                      >
+                      <q-btn
+                        v-else-if="items.estatus == true"
+                        disable=""
+                        label="Ya postulado"
+                        color="purple"
+                        icon="hail"
+                      >
+                        <q-tooltip>
+                          Ya postulado para la vacante</q-tooltip
+                        ></q-btn
+                      >
+                    </div>
+                    <div v-else id="estatusTour">
+                      <q-badge outline color="red" align="middle">
+                        Datos de perfil incompleto
+                      </q-badge>
+                    </div>
                   </div>
-                  <div v-else id="estatusTour">
+                  <div v-else>
                     <q-badge outline color="red" align="middle">
-                      Datos de perfil incompleto
+                      Plazo de registro concluido
                     </q-badge>
                   </div>
                 </q-card-actions>
@@ -330,6 +337,8 @@ const postularme = async () => {
       });
       //loading.value = false;
     }
+    await publicacionVacanteStore.loadVacantesPublicados();
+    dialogMunicipio.value = false;
     $q.loading.hide();
   });
 };

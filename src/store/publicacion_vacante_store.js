@@ -16,10 +16,23 @@ export const usePublicacionVacante = defineStore("publicacionVacante", {
         let respMisSoliciutdes = await api.get(
           "/SolicitudesVacantes/MisSolicitudes"
         );
+        var hoy = new Date();
+        var anio = hoy.getFullYear();
+        var mes = String(hoy.getMonth() + 1).padStart(2, "0");
+        var dia = String(hoy.getDate()).padStart(2, "0");
+        var formatoFecha = anio + "-" + mes + "-" + dia;
+
         let solicitudes = respMisSoliciutdes.data.data;
         let { data } = resp.data;
+
         let listVacantesPublicadas = data.map((vacantes) => {
           let estatus = false;
+          let fecha_vencimiento_boolean = false;
+          var date1 = new Date(formatoFecha);
+          var date2 = new Date(vacantes.fecha_Vencimiento);
+          if (date1 <= date2) {
+            fecha_vencimiento_boolean = true;
+          }
           let filtro = solicitudes.find((x) => x.vacante_Id == vacantes.id);
           if (filtro != undefined) {
             estatus = true;
@@ -31,6 +44,7 @@ export const usePublicacionVacante = defineStore("publicacionVacante", {
             descripcion: vacantes.descripcion,
             convocatoria_Url: vacantes.convocatoria_Url,
             open: false,
+            activo: fecha_vencimiento_boolean,
             estatus: estatus,
           };
         });
@@ -93,6 +107,7 @@ export const usePublicacionVacante = defineStore("publicacionVacante", {
         let resp = await api.get(
           `/SolicitudesVacantes/Solicitar/${vacante}/${oficina}`
         );
+
         if (resp.status == 200) {
           const { success, data } = resp.data;
           if (success === true) {

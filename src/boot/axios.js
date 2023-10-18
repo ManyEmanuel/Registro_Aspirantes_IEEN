@@ -19,20 +19,20 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-// api.interceptors.response.use(
-//   (response) => {
-//     return response;
-//   },
-//   async (error) => {
-//     if (error.response.status === 401) {
-//       alert("Su sesión ha expirado, sera redireccionado al logín");
-//       window.localStorage.clear();
-//       window.location = "http://sistema.ieenayarit.org:9471?return=false";
-//       //window.location = "http://localhost:8080?return=false";
-//     }
-//     return Promise.reject(error);
-//   }
-// );
+api.interceptors.response.use(
+  (response) => {
+    return response;
+  },
+  async (error) => {
+    if (error.response.status === 401) {
+      alert("Su sesión ha expirado, sera redireccionado al logín");
+      window.localStorage.clear();
+      window.location = "http://sistema.ieenayarit.org:9471?return=false";
+      //window.location = "http://localhost:8080?return=false";
+    }
+    return Promise.reject(error);
+  }
+);
 /*api.interceptors.response.use(
   (response) => response,
   (error) => {

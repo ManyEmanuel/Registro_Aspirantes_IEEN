@@ -190,8 +190,8 @@ export const useDatosCiudadanosStore = defineStore("datosCiudadano", {
           let resp = await api.get("/Usuarios");
           let { data } = resp.data;
           let filtro = data.find((x) => x.userName == usuario);
-
           this.usuarioId = filtro.id;
+          console.log("obtenerUsuario", filtro, this.usuarioId);
           //await this.prellenadoDatos();
         }
       } catch (error) {
@@ -285,6 +285,7 @@ export const useDatosCiudadanosStore = defineStore("datosCiudadano", {
           this.datos_personales.municipio_Nacimiento =
             data.municipio_Nacimiento;
         }
+        console.log("Usuario datos", this.usuarioId);
         let user = await api.get(`/Usuarios/${this.usuarioId}`);
         let datosUser = user.data.data;
         if (datosUser != null) {

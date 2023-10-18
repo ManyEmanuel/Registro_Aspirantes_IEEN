@@ -21,6 +21,14 @@
             label="Descargar BD"
             @click="descargar()"
           />
+          <q-btn
+            type="button"
+            class="q-ma-sm"
+            color="accent"
+            icon-right="person"
+            label="Reporte Experiencia"
+            @click="descargarExperiencia()"
+          />
         </div>
       </div>
     </div>
@@ -97,6 +105,18 @@ const descargar = async (id, nombre) => {
   const link = document.createElement("a");
   link.href = registroVacanteStore.documentoExcel;
   link.setAttribute("download", "BD-" + vacante.value.nombre);
+  document.body.appendChild(link);
+  link.click();
+  $q.loading.hide();
+};
+
+const descargarExperiencia = async () => {
+  $q.loading.show();
+  await registroVacanteStore.loadExperienciaExcel(route.query.id);
+  //const adjunto_item = adjuntos.value.find((x) => x.id == id);
+  const link = document.createElement("a");
+  link.href = registroVacanteStore.documentoExperienciaExcel;
+  link.setAttribute("download", "BD-Experiencia-" + vacante.value.nombre);
   document.body.appendChild(link);
   link.click();
   $q.loading.hide();

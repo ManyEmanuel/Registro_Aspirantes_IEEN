@@ -12,7 +12,7 @@ export const useAuthStore = defineStore("auth", {
     doubleCount: (state) => state.counter * 2,
   },
   actions: {
-    async loadDatosEmp() {
+    /*async loadDatosEmp() {
       try {
         const resp = await api.get(`/Empleados/ByUsuario`);
         if (resp.status == 200) {
@@ -86,7 +86,7 @@ export const useAuthStore = defineStore("auth", {
           data: "Ocurrió un error, inténtelo de nuevo. Si el error persiste, contacte a soporte",
         };
       }
-    },
+    },*/
 
     async loadSistemas() {
       try {
@@ -109,7 +109,7 @@ export const useAuthStore = defineStore("auth", {
                 return {
                   id: app.sistema_Id,
                   label: app.sistema,
-                  avatar: app.logo_Url,
+                  //avatar: app.logo_Url,
                   url: app.url,
                 };
               });

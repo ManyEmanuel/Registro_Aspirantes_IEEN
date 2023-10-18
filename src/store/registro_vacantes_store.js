@@ -9,6 +9,7 @@ export const useRegistroVacante = defineStore("registroVacante", {
     requisitos: [],
     listaOficina: [],
     documentoExcel: null,
+    documentoExperienciaExcel: null,
     vacante: {
       id: null,
       empleado_Registra_Id: null,
@@ -113,6 +114,36 @@ export const useRegistroVacante = defineStore("registroVacante", {
             type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,",
           });
           this.documentoExcel = window.URL.createObjectURL(blob);
+          return { success: true };
+        } else {
+          return {
+            success: false,
+            data: "Error al descargar archivo, intentelo de nuevo",
+          };
+        }
+      } catch (error) {
+        console.log(error);
+        return {
+          success: false,
+          data: "Ocurrio un error, intentelo de nuevo. Si el error persiste contacte a soporte",
+        };
+      }
+    },
+
+    async loadExperienciaExcel(id) {
+      try {
+        this.documentoExperienciaExcel = "";
+        const resp = await api.get(
+          `/SolicitudesVacantes/ExcelCurricula/${id}`,
+          {
+            responseType: "blob",
+          }
+        );
+        if (resp.status == 200) {
+          let blob = new window.Blob([resp.data], {
+            type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,",
+          });
+          this.documentoExperienciaExcel = window.URL.createObjectURL(blob);
           return { success: true };
         } else {
           return {

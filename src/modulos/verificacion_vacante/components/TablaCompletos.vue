@@ -14,7 +14,7 @@
   <div class="row">
     <div class="col">
       <q-table
-        :rows="listaCompletos"
+        :rows="listaTablaCompletos"
         :columns="columns"
         :filter="filter"
         :loading="loading"

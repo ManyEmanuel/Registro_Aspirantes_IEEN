@@ -163,6 +163,10 @@ export default defineComponent({
 
   setup() {
     onBeforeMount(() => {
+      load_datos();
+    });
+
+    const load_datos = async () => {
       if (route.query.tokenE && route.query.userNameL) {
         localStorage.setItem("tokenE", route.query.tokenE);
         localStorage.setItem("userNameL", route.query.userNameL);
@@ -170,13 +174,14 @@ export default defineComponent({
       }
       const resp = accesoStore.checkToken();
       if (resp) {
-        datosCiudadanosStore.obtenerUsuario();
-        datosCiudadanosStore.prellenadoDatos();
+        await datosCiudadanosStore.obtenerUsuario();
+        await datosCiudadanosStore.prellenadoDatos();
       } else {
         window.localStorage.clear();
         window.location = "http://sistema.ieenayarit.org:9471?return=false";
       }
-    });
+    };
+
     const datosCiudadanosStore = useDatosCiudadanosStore();
     const accesoStore = useAccesoStore();
     const router = useRouter();
