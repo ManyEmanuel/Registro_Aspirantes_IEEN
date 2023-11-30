@@ -29,6 +29,7 @@
             <q-td v-for="col in props.cols" :key="col.name" :props="props">
               <div v-if="col.name === 'id'">
                 <q-btn
+                  v-if="modulo == null ? false : modulo.eliminar"
                   flat
                   round
                   color="purple-ieen"
@@ -38,6 +39,7 @@
                   <q-tooltip>Eliminar vacante</q-tooltip>
                 </q-btn>
                 <q-btn
+                  v-if="modulo == null ? false : modulo.actualizar"
                   flat
                   round
                   color="purple-ieen"
@@ -48,6 +50,7 @@
                 </q-btn>
                 <q-btn
                   flat
+                  v-if="modulo == null ? false : modulo.leer"
                   round
                   color="purple-ieen"
                   icon="checklist"
@@ -57,6 +60,17 @@
                 </q-btn>
                 <q-btn
                   flat
+                  v-if="modulo == null ? false : modulo.leer"
+                  round
+                  color="purple-ieen"
+                  icon="manage_search"
+                  @click="requisitosCotejo(col.value)"
+                >
+                  <q-tooltip>Requisitos del Cotejo</q-tooltip>
+                </q-btn>
+                <q-btn
+                  flat
+                  v-if="modulo == null ? false : modulo.leer"
                   round
                   color="purple-ieen"
                   icon="visibility"
@@ -66,6 +80,7 @@
                 </q-btn>
                 <q-btn
                   flat
+                  v-if="modulo == null ? false : modulo.leer"
                   round
                   color="purple-ieen"
                   icon="image"
@@ -93,6 +108,16 @@
                 >
                   <q-tooltip>Descargar BD</q-tooltip>
                 </q-btn>
+                <q-btn
+                  v-if="props.row.estatus != 'Sin publicar'"
+                  flat
+                  round
+                  color="purple-ieen"
+                  icon="folder_zip"
+                  @click="Formatos(col.value)"
+                >
+                  <q-tooltip>Obtener formatos de vacante</q-tooltip>
+                </q-btn>
               </div>
 
               <label v-else>{{ col.value }}</label>
@@ -107,12 +132,13 @@
 import { storeToRefs } from "pinia";
 import { useQuasar } from "quasar";
 import { onBeforeMount, ref } from "vue";
-//import { useAuthStore } from "../../../stores/auth_store";
+import { useAuthStore } from "../../../store/auth_store";
 import { useRegistroVacante } from "../../../store/registro_vacantes_store";
 
+const authStore = useAuthStore();
+const { modulo } = storeToRefs(authStore);
 const $q = useQuasar();
-//const authStore = useAuthStore();
-//const { modulo } = storeToRefs(authStore);
+
 const registroVacanteStore = useRegistroVacante();
 const { vacantes } = storeToRefs(registroVacanteStore);
 
@@ -185,6 +211,12 @@ const requisitos = async (id) => {
   registroVacanteStore.actualizarModalRequisito(true);
 };
 
+const requisitosCotejo = async (id) => {
+  await registroVacanteStore.loadVacante(id);
+  await registroVacanteStore.loadRequisitosCotejoVacantes(id);
+  registroVacanteStore.actualizarModalRequisitoCotejo(true);
+};
+
 const eliminar = async (id) => {
   $q.dialog({
     title: "Eliminar vacante",
@@ -223,6 +255,13 @@ const eliminar = async (id) => {
 
 const verDocumento = async (url) => {
   window.open(url, "_blank");
+};
+
+const Formatos = async (id) => {
+  $q.loading.show();
+  await registroVacanteStore.loadFormatosByVacantes(id);
+  registroVacanteStore.actualizarModalFormato(true);
+  $q.loading.hide();
 };
 
 const descargar = async (id, nombre) => {

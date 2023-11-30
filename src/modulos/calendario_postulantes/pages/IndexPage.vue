@@ -52,6 +52,8 @@ import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import { useCalendarioPostulantes } from "../../../store/calendario_postulantes_store";
 import ModalFecha from "../components/ModalFecha.vue";
+import { useAuthStore } from "../../../store/auth_store";
+
 const calendarioPostulanteStore = useCalendarioPostulantes();
 const { listEntrevistas, modal } = storeToRefs(calendarioPostulanteStore);
 

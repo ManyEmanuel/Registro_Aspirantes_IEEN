@@ -5,8 +5,11 @@ export const useVerificacionVacante = defineStore("verificacionVacante", {
   state: () => ({
     modalVisor: false,
     modalAgenda: false,
+    modalCotejo: false,
     listaPendientes: [],
     listaCompletos: [],
+    listaAceptados: [],
+    listaCotejo: [],
     listaPostulantes: [],
     listaDocumentos: [],
     adjunto_url: null,
@@ -37,7 +40,11 @@ export const useVerificacionVacante = defineStore("verificacionVacante", {
       fecha_Entrevista: null,
       hora: "",
       link_Direccion: null,
-      tipo: null,
+      tipo: "Virtual",
+    },
+    cotejo: {
+      id: null,
+      fecha_Cotejo: null,
     },
   }),
 
@@ -68,14 +75,21 @@ export const useVerificacionVacante = defineStore("verificacionVacante", {
       this.agendar.fecha_Entrevista = null;
       this.agendar.hora = "";
       this.agendar.link_Direccion = null;
-      this.agendar.tipo = null;
+      this.agendar.tipo = "Virtual";
       this.agendar.solicitudId = null;
+    },
+
+    initCotejo() {
+      this.cotejo.id = null;
+      this.cotejo.fecha_Cotejo = null;
     },
 
     async loadPostulantes(id) {
       try {
         this.listaPendientes = [];
         this.listaCompletos = [];
+        this.listaAceptados = [];
+        this.listaCotejo = [];
         let resp = await api.get(`/SolicitudesVacantes/ByVacante/${id}`);
         let { data } = resp.data;
         let listPostulante = data.map((postulantes) => {
@@ -89,16 +103,28 @@ export const useVerificacionVacante = defineStore("verificacionVacante", {
             folio: postulantes.folio,
             fecha_Registro: postulantes.fecha_Registro,
             estatus: postulantes.estatus,
+            fecha_Cotejo: postulantes.fecha_Cotejo,
           };
         });
-        console.log("Este es el listado del personal", listPostulante);
 
         this.listaPendientes = listPostulante.filter(
           (x) =>
-            x.estatus !== "Entrevista" && x.estatus !== "Registro terminado"
+            x.estatus !== "Entrevista" &&
+            x.estatus !== "Registro terminado" &&
+            x.estatus !== "Registro aprobado" &&
+            x.estatus !== "Registro no aprobado" &&
+            x.estatus !== "Cotejo documental"
         );
         this.listaCompletos = listPostulante.filter(
-          (x) => x.estatus == "Registro terminado" || x.estatus == "Entrevista"
+          (x) =>
+            x.estatus == "Registro terminado" ||
+            x.estatus == "Registro no aprobado"
+        );
+        this.listaAceptados = listPostulante.filter(
+          (x) => x.estatus == "Entrevista" || x.estatus == "Registro aprobado"
+        );
+        this.listaCotejo = listPostulante.filter(
+          (x) => x.estatus == "Cotejo documental"
         );
       } catch (error) {
         console.error(error);
@@ -233,6 +259,46 @@ export const useVerificacionVacante = defineStore("verificacionVacante", {
       }
     },
 
+    async aceptarRegistro(id) {
+      try {
+        let resp = await api.get(`/SolicitudesVacantes/Aprobar/${id}`);
+        if (resp.status == 200) {
+          const { success, data } = resp.data;
+          if (success === true) {
+            return { success, data };
+          } else {
+            return { success, data };
+          }
+        }
+      } catch (error) {
+        console.error(error);
+        return {
+          success: false,
+          data: "Ocurrió un error, inténtelo de nuevo. Si el error persiste, contacte a soporte",
+        };
+      }
+    },
+
+    async rechazarRegistro(id) {
+      try {
+        let resp = await api.get(`/SolicitudesVacantes/Rechazar/${id}`);
+        if (resp.status == 200) {
+          const { success, data } = resp.data;
+          if (success === true) {
+            return { success, data };
+          } else {
+            return { success, data };
+          }
+        }
+      } catch (error) {
+        console.error(error);
+        return {
+          success: false,
+          data: "Ocurrió un error, inténtelo de nuevo. Si el error persiste, contacte a soporte",
+        };
+      }
+    },
+
     async agendarPostulante(agenda) {
       try {
         let resp = await api.post(
@@ -255,6 +321,30 @@ export const useVerificacionVacante = defineStore("verificacionVacante", {
         };
       }
     },
+
+    async agendarCotejo(cotejo) {
+      try {
+        let resp = await api.post(
+          `/SolicitudesVacantes/AgendarCotejo/${cotejo.id}`,
+          cotejo
+        );
+        if (resp.status == 200) {
+          const { success, data } = resp.data;
+          if (success === true) {
+            return { success, data };
+          } else {
+            return { success, data };
+          }
+        }
+      } catch (error) {
+        console.error(error);
+        return {
+          success: false,
+          data: "Ocurrió un error, inténtelo de nuevo. Si el error persiste, contacte a soporte",
+        };
+      }
+    },
+
     actualizarModal(valor) {
       this.modalVisor = valor;
     },
@@ -262,6 +352,12 @@ export const useVerificacionVacante = defineStore("verificacionVacante", {
       this.modalAgenda = valor;
       if (valor == true) {
         this.agendar.solicitudId = id;
+      }
+    },
+    actualizarModalCotejo(valor, id) {
+      this.modalCotejo = valor;
+      if (valor == true) {
+        this.cotejo.id = id;
       }
     },
   },

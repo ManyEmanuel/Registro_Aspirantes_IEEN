@@ -58,18 +58,30 @@
             transition-prev="slide-down"
             transition-next="slide-up"
           >
-            <q-tab-panel name="datos_personales">
+            <q-tab-panel
+              v-if="modulo == null ? false : modulo.registrar"
+              name="datos_personales"
+            >
               <ModalPersonales />
             </q-tab-panel>
-            <q-tab-panel name="formacion_academica">
+            <q-tab-panel
+              v-if="modulo == null ? false : modulo.registrar"
+              name="formacion_academica"
+            >
               <ModalAcademica />
             </q-tab-panel>
 
-            <q-tab-panel name="datos_curriculares">
+            <q-tab-panel
+              v-if="modulo == null ? false : modulo.registrar"
+              name="datos_curriculares"
+            >
               <ModalCurricular />
             </q-tab-panel>
 
-            <q-tab-panel name="otros_datos">
+            <q-tab-panel
+              v-if="modulo == null ? false : modulo.registrar"
+              name="otros_datos"
+            >
               <ModalCursos />
             </q-tab-panel>
           </q-tab-panels>
@@ -83,6 +95,7 @@
 import { storeToRefs } from "pinia";
 import { useQuasar } from "quasar";
 import { ref, onBeforeMount, watch } from "vue";
+import { useAuthStore } from "../../../store/auth_store";
 import { useDatosCiudadanosStore } from "../../../store/datos_ciudadanos_store";
 import ModalPersonales from "../components/ModalPersonales.vue";
 import ModalAcademica from "./ModalAcademica.vue";
@@ -91,6 +104,8 @@ import ModalCursos from "./ModalCursos.vue";
 
 const $q = useQuasar();
 const datosCiudadanosStore = useDatosCiudadanosStore();
+const authStore = useAuthStore();
+const { modulo } = storeToRefs(authStore);
 const { modal, stepper, datos_personales, myLocale } =
   storeToRefs(datosCiudadanosStore);
 const step = ref(stepper);

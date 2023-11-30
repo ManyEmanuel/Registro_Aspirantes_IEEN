@@ -290,7 +290,10 @@
           </div>
         </div>
         <br />
-        <div class="col-12 justify-end">
+        <div
+          v-if="modulo == null ? false : modulo.registrar"
+          class="col-12 justify-end"
+        >
           <div class="text-right q-gutter-xs">
             <q-btn
               label="Guardar"
@@ -301,7 +304,11 @@
           </div>
         </div>
       </q-form>
-      <q-dialog v-model="verFoto" persistent>
+      <q-dialog
+        v-if="modulo == null ? false : modulo.leer"
+        v-model="verFoto"
+        persistent
+      >
         <q-card style="min-width: 400px">
           <q-card-section class="row items-center q-pb-none">
             <div class="text-h6">Foto de registro</div>
@@ -326,7 +333,10 @@ import { storeToRefs } from "pinia";
 import { useQuasar, date } from "quasar";
 import { ref, onBeforeMount, watch } from "vue";
 import { useDatosCiudadanosStore } from "../../../store/datos_ciudadanos_store";
+import { useAuthStore } from "../../../store/auth_store";
 
+const authStore = useAuthStore();
+const { modulo } = storeToRefs(authStore);
 const $q = useQuasar();
 const datosCiudadanosStore = useDatosCiudadanosStore();
 const estadoId = ref();

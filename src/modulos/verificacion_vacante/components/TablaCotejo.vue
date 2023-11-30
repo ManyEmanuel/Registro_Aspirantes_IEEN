@@ -14,7 +14,7 @@
   <div class="row">
     <div class="col">
       <q-table
-        :rows="listaCompletos"
+        :rows="listaCotejo"
         :columns="columns"
         :filter="filter"
         :loading="loading"
@@ -103,13 +103,13 @@ const router = useRouter();
 const verificacionVacanteStore = useVerificacionVacante();
 const registroVacanteStore = useRegistroVacante();
 const { listaOficina } = storeToRefs(registroVacanteStore);
-const { listaCompletos } = storeToRefs(verificacionVacanteStore);
+const { listaCotejo } = storeToRefs(verificacionVacanteStore);
 let listaBusquedaOficina = listaOficina.value;
 let verificación = listaBusquedaOficina.find((x) => x.value == 0);
 if (verificación == undefined) {
   listaBusquedaOficina.unshift({ label: "Ver todos", value: 0 });
 }
-let listaTablaCompletos = listaCompletos.value;
+let listaTablaCotejo = listaCotejo.value;
 const oficinaId = ref();
 
 const columns = [
@@ -149,6 +149,13 @@ const columns = [
     sortable: true,
   },
   {
+    name: "fecha_Cotejo",
+    align: "center",
+    label: "Fecha de Cotejo",
+    field: "fecha_Cotejo",
+    sortable: true,
+  },
+  {
     name: "id",
     align: "center",
     label: "Opciones",
@@ -169,17 +176,15 @@ const filter = ref("");
 
 watch(oficinaId, (val) => {
   if (val.value != 0) {
-    let listaFiltrada = listaTablaCompletos.filter(
-      (x) => x.oficina == val.label
-    );
-    listaCompletos.value = listaFiltrada;
+    let listaFiltrada = listaTablaCotejo.filter((x) => x.oficina == val.label);
+    listaCotejo.value = listaFiltrada;
   } else {
-    listaCompletos.value = listaTablaCompletos;
+    listaCotejo.value = listaTablaCotejo;
   }
 });
 
 const verDocumentacion = async (solicitud, vacante, usuario) => {
-  await verificacionVacanteStore.loadPostulantesFiltrados(listaCompletos.value);
+  await verificacionVacanteStore.loadPostulantesFiltrados(listaCotejo.value);
   await verificacionVacanteStore.loadInformacionUsuario(usuario);
   router.push({
     path: "/Datos_Postulado",

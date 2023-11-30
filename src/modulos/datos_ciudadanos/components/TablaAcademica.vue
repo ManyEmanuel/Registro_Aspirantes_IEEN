@@ -20,6 +20,7 @@
             <q-td v-for="col in props.cols" :key="col.name" :props="props">
               <div v-if="col.name === 'id'">
                 <q-btn
+                  v-if="modulo == null ? false : modulo.eliminar"
                   flat
                   round
                   color="purple-ieen"
@@ -42,7 +43,10 @@ import { storeToRefs } from "pinia";
 import { useQuasar } from "quasar";
 import { ref, onBeforeMount, watch } from "vue";
 import { useDatosCiudadanosStore } from "../../../store/datos_ciudadanos_store";
+import { useAuthStore } from "../../../store/auth_store";
 
+const authStore = useAuthStore();
+const { modulo } = storeToRefs(authStore);
 const datosCiudadanosStore = useDatosCiudadanosStore();
 const { list_Formacion_Academica } = storeToRefs(datosCiudadanosStore);
 const $q = useQuasar();

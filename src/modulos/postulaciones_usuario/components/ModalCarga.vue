@@ -34,6 +34,7 @@
                 @click="actualizarModal(false)"
               />
               <q-btn
+                v-if="modulo == null ? false : modulo.registrar"
                 label="Guardar"
                 type="submit"
                 color="positive"
@@ -51,7 +52,10 @@ import { storeToRefs } from "pinia";
 import { useQuasar, date } from "quasar";
 import { ref, onBeforeMount, watch } from "vue";
 import { usePostulacionesUsuario } from "../../../store/postulaciones_usuario_store";
+import { useAuthStore } from "../../../store/auth_store";
 
+const authStore = useAuthStore();
+const { modulo } = storeToRefs(authStore);
 const postulacionesUsuarioStore = usePostulacionesUsuario();
 const { cargaArchivo, listCumplimientoRequisito, modal } = storeToRefs(
   postulacionesUsuarioStore

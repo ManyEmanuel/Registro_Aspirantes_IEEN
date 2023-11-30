@@ -17,6 +17,8 @@
     <TablaComp />
     <ModalComp />
     <ModalRequisito />
+    <ModalFormatos />
+    <ModalRequisitoCotejo />
   </q-page>
 </template>
 <script setup>
@@ -28,22 +30,27 @@ import { useRegistroVacante } from "../../../store/registro_vacantes_store";
 import TablaComp from "../components/TablaComp.vue";
 import ModalComp from "../components/ModalComp.vue";
 import ModalRequisito from "../components/ModalRequisito.vue";
+import ModalRequisitoCotejo from "../components/ModalRequisitoCotejo.vue";
+import ModalFormatos from "../components/ModalFormatos.vue";
+import { useAuthStore } from "../../../store/auth_store";
+const authStore = useAuthStore();
+const { modulo } = storeToRefs(authStore);
+
+const siglas = "SRV-REG-RV";
 
 const $q = useQuasar();
 //const authStore = useAuthStore();
 const registroVacanteStore = useRegistroVacante();
 //const { vacantes } = storeToRefs(registroVacanteStore);
-/*const siglas = "SI-REG-SOL";
 onBeforeMount(() => {
   leerPermisos();
-
 });
 
 const leerPermisos = async () => {
   $q.loading.show();
   await authStore.loadModulo(siglas);
   $q.loading.hide();
-}; */
+};
 
 const actualizarModal = (valor) => {
   $q.loading.show();

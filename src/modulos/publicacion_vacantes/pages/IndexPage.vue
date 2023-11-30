@@ -67,33 +67,35 @@
                   >
                   <q-space> </q-space>
                   <br />
-                  <div v-if="items.activo == true">
-                    <div id="estatusTour" v-if="checkComplete">
-                      <q-btn
-                        v-if="items.estatus == false"
-                        label="Postularme"
-                        color="purple"
-                        icon="hail"
-                        @click="oficinaSeleccion(items.id)"
-                      >
-                        <q-tooltip> Postularme a la vacante</q-tooltip></q-btn
-                      >
-                      <q-btn
-                        v-else-if="items.estatus == true"
-                        disable=""
-                        label="Ya postulado"
-                        color="purple"
-                        icon="hail"
-                      >
-                        <q-tooltip>
-                          Ya postulado para la vacante</q-tooltip
-                        ></q-btn
-                      >
-                    </div>
-                    <div v-else id="estatusTour">
-                      <q-badge outline color="red" align="middle">
-                        Datos de perfil incompleto
-                      </q-badge>
+                  <div v-if="modulo == null ? false : modulo.registrar">
+                    <div v-if="items.activo == true">
+                      <div id="estatusTour" v-if="checkComplete">
+                        <q-btn
+                          v-if="items.estatus == false"
+                          label="Postularme"
+                          color="purple"
+                          icon="hail"
+                          @click="oficinaSeleccion(items.id)"
+                        >
+                          <q-tooltip> Postularme a la vacante</q-tooltip></q-btn
+                        >
+                        <q-btn
+                          v-else-if="items.estatus == true"
+                          disable=""
+                          label="Ya postulado"
+                          color="purple"
+                          icon="hail"
+                        >
+                          <q-tooltip>
+                            Ya postulado para la vacante</q-tooltip
+                          ></q-btn
+                        >
+                      </div>
+                      <div v-else id="estatusTour">
+                        <q-badge outline color="red" align="middle">
+                          Datos de perfil incompleto
+                        </q-badge>
+                      </div>
                     </div>
                   </div>
                   <div v-else>
@@ -124,7 +126,11 @@
         </div>
       </div>
     </div>
-    <q-dialog v-model="dialogMunicipio" persistent>
+    <q-dialog
+      v-if="modulo == null ? false : modulo.registrar"
+      v-model="dialogMunicipio"
+      persistent
+    >
       <q-card style="min-width: 400px">
         <q-card-section>
           <div class="text-h6">Municipio en el que desea postularse</div>
@@ -160,8 +166,12 @@ import { useDatosCiudadanosStore } from "../../../store/datos_ciudadanos_store";
 import { usePostulacionesUsuario } from "src/store/postulaciones_usuario_store";
 import introJs from "intro.js";
 import "intro.js/introjs.css";
+import { useAuthStore } from "../../../store/auth_store";
 
 const $q = useQuasar();
+const authStore = useAuthStore();
+const { modulo } = storeToRefs(authStore);
+const siglas = "SRV-REG-MV";
 const router = useRouter();
 const publicacionVacanteStore = usePublicacionVacante();
 const registroVacanteStore = useRegistroVacante();
@@ -179,6 +189,7 @@ const formatoBotones = ref($q.screen.width <= 1700 ? "center" : "around");
 let vacante_Id = null;
 
 onBeforeMount(() => {
+  leerPermisos();
   publicacionVacanteStore.loadVacantesPublicados();
   datosCiudadanosStore.prellenadoDatos();
 });
@@ -190,6 +201,13 @@ watch($q.screen, (val) => {
     formatoBotones.value = "around";
   }
 });
+
+const leerPermisos = async () => {
+  $q.loading.show();
+  await authStore.loadModulo(siglas);
+  $q.loading.hide();
+  console.log("Esto es modulos", modulo);
+};
 
 const verVacante = async (url) => {
   window.open(url, "_blank");

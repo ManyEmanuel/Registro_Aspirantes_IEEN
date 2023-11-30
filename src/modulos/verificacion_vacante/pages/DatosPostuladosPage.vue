@@ -207,13 +207,10 @@ import { useRegistroVacante } from "../../../store/registro_vacantes_store";
 import { useVerificacionVacante } from "../../../store/verificacion_vacante_store";
 import { usePostulacionesUsuario } from "../../../store/postulaciones_usuario_store";
 import ModalVisorComp from "../components/ModalVisorComp.vue";
+import { useAuthStore } from "../../../store/auth_store";
 
-/*import TablaPendientes from "../components/TablaPendientes.vue";
-import TablaCompletos from "../components/TablaCompletos.vue";
-import { useVerificacionVacante } from "../../../store/verificacion_vacante_store";
-//import { usePostulacionesUsuario } from "../../../store/postulaciones_usuario_store";
-import { useRegistroVacante } from "../../../store/registro_vacantes_store";
-//import { useDatosCiudadanosStore } from "../../../store/datos_ciudadanos_store";*/
+const authStore = useAuthStore();
+const { modulo } = storeToRefs(authStore);
 
 const $q = useQuasar();
 const router = useRouter();

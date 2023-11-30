@@ -15,7 +15,7 @@
     <br />
     <div class="col-12">
       <q-table
-        :rows="listaTablaPendientes"
+        :rows="listaPendientes"
         :columns="columns"
         :filter="filter"
         :loading="loading"
@@ -73,7 +73,10 @@ import { onBeforeMount, onMounted, ref, watch } from "vue";
 import { useVerificacionVacante } from "../../../store/verificacion_vacante_store";
 import { useRegistroVacante } from "../../../store/registro_vacantes_store";
 import { useRouter, useRoute } from "vue-router";
+import { useAuthStore } from "../../../store/auth_store";
 
+const authStore = useAuthStore();
+const { modulo } = storeToRefs(authStore);
 const $q = useQuasar();
 const router = useRouter();
 const route = useRoute();
@@ -153,17 +156,19 @@ const filter = ref("");
 
 watch(oficinaId, (val) => {
   if (val.value != 0) {
-    let listaFiltrada = listaPendientes.value.filter(
+    let listaFiltrada = listaTablaPendientes.filter(
       (x) => x.oficina == val.label
     );
-    listaTablaPendientes = listaFiltrada;
+    listaPendientes.value = listaFiltrada;
   } else {
-    listaTablaPendientes = listaPendientes.value;
+    listaPendientes.value = listaTablaPendientes;
   }
 });
 
 const verDocumentacion = async (solicitud, vacante, usuario) => {
-  await verificacionVacanteStore.loadPostulantesFiltrados(listaTablaPendientes);
+  await verificacionVacanteStore.loadPostulantesFiltrados(
+    listaPendientes.value
+  );
   await verificacionVacanteStore.loadInformacionUsuario(usuario);
   router.push({
     path: "/Datos_Postulado",

@@ -1,7 +1,9 @@
 import { Date } from "core-js";
 import { defineStore } from "pinia";
 import { api } from "src/boot/axios";
+import { EncryptStorage } from "storage-encryption";
 
+const encryptStorage = new EncryptStorage("SECRET_KEY", "sessionStorage");
 export const useDatosCiudadanosStore = defineStore("datosCiudadano", {
   state: () => ({
     modal: false,
@@ -186,12 +188,12 @@ export const useDatosCiudadanosStore = defineStore("datosCiudadano", {
       try {
         if (this.usuarioId != null) {
         } else {
-          let usuario = localStorage.getItem("userNameL");
+          let usuario = encryptStorage.decrypt("userNameL");
+          console.log("Esto es usuario", usuario);
           let resp = await api.get("/Usuarios");
           let { data } = resp.data;
           let filtro = data.find((x) => x.userName == usuario);
           this.usuarioId = filtro.id;
-          console.log("obtenerUsuario", filtro, this.usuarioId);
           //await this.prellenadoDatos();
         }
       } catch (error) {

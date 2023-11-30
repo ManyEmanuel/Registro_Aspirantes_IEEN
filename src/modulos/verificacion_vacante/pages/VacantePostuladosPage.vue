@@ -44,12 +44,18 @@
         narrow-indicator
       >
         <q-tab name="pendientes" label="Pendientes / con observaciones" />
-        <q-tab name="concluidos" label="Completos" />
+        <q-tab name="concluidos" label="Registros completos" />
+        <q-tab name="aceptados" label="Aceptados" />
+        <q-tab name="cotejo" label="Cotejo" />
       </q-tabs>
 
       <q-separator />
 
-      <q-tab-panels v-model="tab" animated>
+      <q-tab-panels
+        v-if="modulo == null ? false : modulo.leer"
+        v-model="tab"
+        animated
+      >
         <q-tab-panel name="pendientes">
           <div v-if="tab == 'pendientes'">
             <TablaPendientes />
@@ -61,9 +67,20 @@
             <TablaCompletos />
           </div>
         </q-tab-panel>
+        <q-tab-panel name="aceptados">
+          <div v-if="tab == 'aceptados'">
+            <TablaAceptados />
+          </div>
+        </q-tab-panel>
+        <q-tab-panel name="cotejo">
+          <div v-if="tab == 'cotejo'">
+            <TablaCotejo />
+          </div>
+        </q-tab-panel>
       </q-tab-panels>
     </q-card>
     <ModalAgendar />
+    <ModalCotejo />
   </q-page>
 </template>
 
@@ -74,11 +91,17 @@ import { useRouter } from "vue-router";
 import { useRoute } from "vue-router";
 import { useQuasar } from "quasar";
 import ModalAgendar from "../components/ModalAgendar.vue";
+import ModalCotejo from "../components/ModalCotejo.vue";
 import { useVerificacionVacante } from "../../../store/verificacion_vacante_store";
 import { useRegistroVacante } from "../../../store/registro_vacantes_store";
 import TablaPendientes from "../components/TablaPendientes.vue";
 import TablaCompletos from "../components/TablaCompletos.vue";
+import TablaAceptados from "../components/TablaAceptados.vue";
+import TablaCotejo from "../components/TablaCotejo.vue";
+import { useAuthStore } from "../../../store/auth_store";
 
+const authStore = useAuthStore();
+const { modulo } = storeToRefs(authStore);
 const $q = useQuasar();
 const router = useRouter();
 const route = useRoute();

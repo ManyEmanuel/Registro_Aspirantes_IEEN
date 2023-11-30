@@ -192,6 +192,7 @@
                 @click="actualizarModal(false)"
               />
               <q-btn
+                v-if="modulo == null ? false : modulo.registrar"
                 label="Guardar"
                 type="submit"
                 color="positive"
@@ -211,7 +212,10 @@ import { useQuasar, date } from "quasar";
 //import { useAuthStore } from "../../../stores/auth_store";
 import { useRegistroVacante } from "../../../store/registro_vacantes_store";
 import { useDatosCiudadanosStore } from "../../../store/datos_ciudadanos_store";
+import { useAuthStore } from "../../../store/auth_store";
 
+const authStore = useAuthStore();
+const { modulo } = storeToRefs(authStore);
 const $q = useQuasar();
 const datosCiudadanosStore = useDatosCiudadanosStore();
 const registroVacanteStore = useRegistroVacante();

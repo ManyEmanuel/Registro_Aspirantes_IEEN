@@ -2,7 +2,7 @@
   <div class="row">
     <div class="col">
       <q-table
-        :rows="requisitos"
+        :rows="requisitosCotejo"
         :columns="columns"
         :filter="filter"
         :loading="loading"
@@ -59,7 +59,7 @@ const $q = useQuasar();
 //const authStore = useAuthStore();
 //const { modulo } = storeToRefs(authStore);
 const registroVacanteStore = useRegistroVacante();
-const { requisitos, vacante } = storeToRefs(registroVacanteStore);
+const { requisitosCotejo, vacante } = storeToRefs(registroVacanteStore);
 
 onBeforeMount(() => {
   registroVacanteStore.loadVacantes();
@@ -69,24 +69,18 @@ const columns = [
   {
     name: "nombre",
     align: "center",
-    label: "Nombre de la vacante",
+    label: "Nombre del requisito",
     field: "nombre",
     sortable: true,
   },
   {
-    name: "tipo",
+    name: "descripcion",
     align: "center",
-    label: "Tipo de requisito",
-    field: "tipo",
+    label: "Descripción del requisito",
+    field: "descripcion",
     sortable: true,
   },
-  {
-    name: "estatus",
-    align: "center",
-    label: "Estatus",
-    field: "estatus",
-    sortable: true,
-  },
+
   {
     name: "id",
     align: "center",
@@ -107,7 +101,7 @@ const pagination = ref({
 const filter = ref("");
 
 const editar = async (id) => {
-  await registroVacanteStore.loadRequisitoVacante(id);
+  await registroVacanteStore.loadRequisitoVacanteCotejo(id);
 };
 
 const eliminar = async (id) => {
@@ -128,14 +122,14 @@ const eliminar = async (id) => {
     },
   }).onOk(async () => {
     $q.loading.show();
-    const resp = await registroVacanteStore.deleteRequisito(id);
+    const resp = await registroVacanteStore.deleteRequisitoCotejo(id);
     if (resp.success) {
       $q.loading.hide();
       $q.notify({
         type: "positive",
         message: resp.data,
       });
-      await registroVacanteStore.loadRequisitosVacantes(vacante.value.id);
+      await registroVacanteStore.loadRequisitosCotejoVacantes(vacante.value.id);
     } else {
       $q.loading.hide();
       $q.notify({

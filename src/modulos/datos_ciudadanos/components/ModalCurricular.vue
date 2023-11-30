@@ -67,7 +67,10 @@
         <br />
         <br />
 
-        <div class="text-right q-gutter-xs">
+        <div
+          v-if="modulo == null ? false : modulo.registrar"
+          class="text-right q-gutter-xs"
+        >
           <q-btn
             icon-right="add"
             label="Agregar"
@@ -83,7 +86,7 @@
 
       <q-separator style="width: 100%" color="purple" size="2px" />
       <br />
-      <TablaCurricular />
+      <TablaCurricular v-if="modulo == null ? false : modulo.leer" />
       <br />
     </q-card-section>
   </q-card>
@@ -94,8 +97,11 @@ import { useQuasar } from "quasar";
 import { ref, onBeforeMount, watch } from "vue";
 import { useDatosCiudadanosStore } from "../../../store/datos_ciudadanos_store";
 import TablaCurricular from "./TablaCurricular.vue";
+import { useAuthStore } from "../../../store/auth_store";
 
 const datosCiudadanosStore = useDatosCiudadanosStore();
+const authStore = useAuthStore();
+const { modulo } = storeToRefs(authStore);
 const { experiencia_Laboral, list_Experiencia_Laboral, botonLaboral } =
   storeToRefs(datosCiudadanosStore);
 const $q = useQuasar();

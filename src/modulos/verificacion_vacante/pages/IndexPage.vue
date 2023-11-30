@@ -22,6 +22,7 @@
           <q-item class="text-center">
             <q-item-section class="text-center">
               <q-btn
+                v-if="modulo == null ? false : modulo.leer"
                 label="Ir a postulados"
                 color="purple"
                 icon="arrow_forward"
@@ -59,6 +60,12 @@ import { useQuasar } from "quasar";
 
 import { useRegistroVacante } from "../../../store/registro_vacantes_store";
 import { useVerificacionVacante } from "../../../store/verificacion_vacante_store";
+import { useAuthStore } from "../../../store/auth_store";
+
+const authStore = useAuthStore();
+const { modulo } = storeToRefs(authStore);
+
+const siglas = "SRV-REG-PV";
 
 const $q = useQuasar();
 const router = useRouter();
@@ -67,8 +74,15 @@ const verificacionVacanteStore = useVerificacionVacante();
 
 const { vacantes } = storeToRefs(registroVacanteStore);
 onBeforeMount(() => {
+  leerPermisos();
   registroVacanteStore.loadVacantes();
 });
+
+const leerPermisos = async () => {
+  $q.loading.show();
+  await authStore.loadModulo(siglas);
+  $q.loading.hide();
+};
 
 const irVacante = async (id) => {
   await verificacionVacanteStore.loadPostulantes(id);

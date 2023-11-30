@@ -16,6 +16,7 @@
               <div v-if="col.name === 'id'">
                 <div v-if="props.row.tipo == 'Ninguno'">
                   <q-btn
+                    v-if="modulo == null ? false : modulo.eliminar"
                     flat
                     round
                     color="purple-ieen"
@@ -27,6 +28,7 @@
                 </div>
                 <div v-else>
                   <q-btn
+                    v-if="modulo == null ? false : modulo.eliminar"
                     flat
                     round
                     color="purple-ieen"
@@ -50,7 +52,10 @@ import { storeToRefs } from "pinia";
 import { useQuasar } from "quasar";
 import { ref, onBeforeMount, watch } from "vue";
 import { useDatosCiudadanosStore } from "../../../store/datos_ciudadanos_store";
+import { useAuthStore } from "../../../store/auth_store";
 
+const authStore = useAuthStore();
+const { modulo } = storeToRefs(authStore);
 const datosCiudadanosStore = useDatosCiudadanosStore();
 const { list_publicaciones_Participaciones } =
   storeToRefs(datosCiudadanosStore);

@@ -56,7 +56,7 @@
                 >Requisitos de la vacante</q-item-label
               >
               <q-item
-                v-for="(item, index) in listCumplimientoRequisito"
+                v-for="item in listCumplimientoRequisito"
                 :key="item.id"
                 v-ripple
               >
@@ -67,6 +67,7 @@
                     </q-tooltip>
                   </q-icon>
                 </q-item-section>
+
                 <q-item-section
                   v-if="item.is_formato == true && item.registrado == false"
                   avatar
@@ -128,6 +129,7 @@
                     <q-badge color="green"> Archivo aceptado </q-badge>
                   </div>
                 </q-item-section>
+
                 <q-item-section
                   id="subidaTour"
                   v-if="item.registrado == false"
@@ -182,6 +184,10 @@ import ReporteSCME03 from "../../../helpers/SCME-F03";
 import ModalVisorComp from "../../verificacion_vacante/components/ModalVisorComp.vue";
 import ModalCarga from "../components/ModalCarga.vue";
 import { useVerificacionVacante } from "../../../store/verificacion_vacante_store";
+import { useAuthStore } from "../../../store/auth_store";
+
+const authStore = useAuthStore();
+const { modulo } = storeToRefs(authStore);
 const verificacionVacanteStore = useVerificacionVacante();
 const $q = useQuasar();
 const router = useRouter();

@@ -54,7 +54,10 @@
         </div>
         <br />
 
-        <div class="text-right q-gutter-xs">
+        <div
+          v-if="modulo == null ? false : modulo.registrar"
+          class="text-right q-gutter-xs"
+        >
           <q-btn
             icon-right="add"
             label="Agregar"
@@ -67,7 +70,7 @@
       <br />
       <q-separator style="width: 100%" color="purple" size="2px" />
       <br />
-      <TablaAcademica />
+      <TablaAcademica v-if="modulo == null ? false : modulo.leer" />
       <br />
     </q-card-section>
   </q-card>
@@ -75,11 +78,14 @@
 <script setup>
 import { storeToRefs } from "pinia";
 import { useQuasar } from "quasar";
+import { useAuthStore } from "../../../store/auth_store";
 import { ref, onBeforeMount, watch } from "vue";
 import { useDatosCiudadanosStore } from "../../../store/datos_ciudadanos_store";
 import TablaAcademica from "../components/TablaAcademica.vue";
 
 const datosCiudadanosStore = useDatosCiudadanosStore();
+const authStore = useAuthStore();
+const { modulo } = storeToRefs(authStore);
 const { formacion_Academica, tipoEstudio } = storeToRefs(datosCiudadanosStore);
 const $q = useQuasar();
 

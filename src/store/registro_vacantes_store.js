@@ -5,10 +5,15 @@ export const useRegistroVacante = defineStore("registroVacante", {
   state: () => ({
     modal: false,
     modalRequisito: false,
+    modalFormatos: false,
+    modalRequisitoCotejo: false,
     vacantes: [],
     requisitos: [],
+    requisitosCotejo: [],
     listaOficina: [],
+    listaFormatos: [],
     documentoExcel: null,
+    documentoZip: null,
     documentoExperienciaExcel: null,
     vacante: {
       id: null,
@@ -40,6 +45,13 @@ export const useRegistroVacante = defineStore("registroVacante", {
       is_Documento_String: null,
       activo: false,
       activo_String: null,
+      fecha_Registro: null,
+    },
+    requisitoCotejo: {
+      id: null,
+      vacante_Id: null,
+      nombre: null,
+      descripcion: null,
       fecha_Registro: null,
     },
   }),
@@ -77,6 +89,14 @@ export const useRegistroVacante = defineStore("registroVacante", {
       this.requisito.activo = false;
       this.requisito.activo_String = false;
       this.requisito.fecha_Registro = null;
+    },
+
+    initRequisitosCotejo() {
+      this.requisitoCotejo.id = null;
+      this.requisitoCotejo.vacante_Id = null;
+      this.requisitoCotejo.nombre = null;
+      this.requisitoCotejo.descripcion = null;
+      this.requisitoCotejo.fecha_Registro = null;
     },
     async loadVacantes() {
       try {
@@ -144,6 +164,36 @@ export const useRegistroVacante = defineStore("registroVacante", {
             type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,",
           });
           this.documentoExperienciaExcel = window.URL.createObjectURL(blob);
+          return { success: true };
+        } else {
+          return {
+            success: false,
+            data: "Error al descargar archivo, intentelo de nuevo",
+          };
+        }
+      } catch (error) {
+        console.log(error);
+        return {
+          success: false,
+          data: "Ocurrio un error, intentelo de nuevo. Si el error persiste contacte a soporte",
+        };
+      }
+    },
+
+    async loadFormatoZip(vacante, formato) {
+      try {
+        this.documentoZip = "";
+        const resp = await api.get(
+          `/SolicitudesVacantes/ObtenerFormatos/${vacante}/${formato}`,
+          {
+            responseType: "blob",
+          }
+        );
+        if (resp.status == 200) {
+          let blob = new window.Blob([resp.data], {
+            type: "application/zip",
+          });
+          this.documentoZip = window.URL.createObjectURL(blob);
           return { success: true };
         } else {
           return {
@@ -267,6 +317,60 @@ export const useRegistroVacante = defineStore("registroVacante", {
       }
     },
 
+    async loadRequisitosCotejoVacantes(id) {
+      try {
+        let resp = await api.get(`/VacantesRequisitosCotejo/ByVacante/${id}`);
+        let { data } = resp.data;
+        console.log("Esto es data de cotejo", data);
+        let listRequisitos = data.map((cotejo) => {
+          return {
+            id: cotejo.id,
+            nombre: cotejo.nombre,
+            descripcion: cotejo.descripcion,
+          };
+        });
+
+        this.requisitosCotejo = listRequisitos;
+        console.log("Estos son los de cotejo", this.requisitoCotejo);
+      } catch (error) {
+        console.error(error);
+        return {
+          success: false,
+          data: "Ocurrió un error, inténtelo de nuevo. Si el error persiste, contacte a soporte",
+        };
+      }
+    },
+
+    async loadRequisitoVacanteCotejo(id) {
+      try {
+        let resp = await api.get(`/VacantesRequisitosCotejo/${id}`);
+        if (resp.status == 200) {
+          const { success, data } = resp.data;
+          if (success === true) {
+            this.requisitoCotejo.id = data.id;
+            this.requisitoCotejo.vacante_Id = data.vacanteId;
+            this.requisitoCotejo.nombre = data.nombre;
+            this.requisitoCotejo.descripcion = data.descripcion;
+            this.requisitoCotejo.fecha_Registro = data.fecha_Registro;
+            return { success };
+          } else {
+            return { success, data };
+          }
+        } else {
+          return {
+            success: false,
+            data: "Ocurrió un error, inténtelo de nuevo. Si el error persiste, contacte a soporte",
+          };
+        }
+      } catch (error) {
+        console.error(error);
+        return {
+          success: false,
+          data: "Ocurrió un error, inténtelo de nuevo. Si el error persiste, contacte a soporte",
+        };
+      }
+    },
+
     async loadListOficinas() {
       try {
         let resp = await api.get("/Oficinas/GetLista");
@@ -286,6 +390,32 @@ export const useRegistroVacante = defineStore("registroVacante", {
         };
       }
     },
+
+    async loadFormatosByVacantes(id) {
+      try {
+        let resp = await api.get(`/VacantesRequisitos/ByVacante/${id}`);
+        let { data } = resp.data;
+        let filtroFormato = data.filter((element) =>
+          element.nombre.includes("Formato")
+        );
+        let listadoFormatos = filtroFormato.map((formato) => {
+          return {
+            value: formato.nombre,
+            label: formato.nombre,
+            vacanteId: id,
+          };
+        });
+        this.listaFormatos = listadoFormatos;
+        console.log("Esta es la lista de formatos ", listadoFormatos);
+      } catch (error) {
+        console.error(error);
+        return {
+          success: false,
+          data: "Ocurrió un error, inténtelo de nuevo. Si el error persiste, contacte a soporte",
+        };
+      }
+    },
+
     async consultarVacante() {
       try {
       } catch (error) {
@@ -496,11 +626,89 @@ export const useRegistroVacante = defineStore("registroVacante", {
       }
     },
 
+    async createRequisitoCotejoVacante(requisitoCotejo) {
+      try {
+        const resp = await api.post(
+          `/VacantesRequisitosCotejo/${this.vacante.id}`,
+          requisitoCotejo
+        );
+        if (resp.status == 200) {
+          const { success, data } = resp.data;
+          if (success === true) {
+            return { success, data };
+          } else {
+            return { success, data };
+          }
+        }
+      } catch (error) {
+        console.log(error);
+        return {
+          success: false,
+          data: "Ocurrió un error, inténtelo de nuevo. Si el error persiste, contacte a soporte",
+        };
+      }
+    },
+
+    async editRequisitoCotejoVacante(requisitoCotejo) {
+      try {
+        const resp = await api.put(
+          `/VacantesRequisitosCotejo/${this.requisitoCotejo.id}`,
+          requisitoCotejo
+        );
+        if (resp.status == 200) {
+          const { success, data } = resp.data;
+          if (success === true) {
+            return { success, data };
+          } else {
+            return { success, data };
+          }
+        }
+      } catch (error) {
+        console.log(error);
+        return {
+          success: false,
+          data: "Ocurrió un error, inténtelo de nuevo. Si el error persiste, contacte a soporte",
+        };
+      }
+    },
+
+    async deleteRequisitoCotejo(id) {
+      try {
+        const resp = await api.delete(`/VacantesRequisitosCotejo/${id}`);
+        if (resp.status == 200) {
+          let { success, data } = resp.data;
+          if (success === true) {
+            return { success, data };
+          } else {
+            return { success, data };
+          }
+        } else {
+          return {
+            success: false,
+            data: "Ocurrio un error, intentelo de nuevo",
+          };
+        }
+      } catch (error) {
+        console.error(error);
+        return {
+          success: false,
+          data: "Ocurrió un error, inténtelo de nuevo. Si el error persiste, contacte a soporte",
+        };
+      }
+    },
+
     actualizarModal(valor) {
       this.modal = valor;
     },
     actualizarModalRequisito(valor) {
       this.modalRequisito = valor;
+    },
+    actualizarModalFormato(valor) {
+      this.modalFormatos = valor;
+    },
+
+    actualizarModalRequisitoCotejo(valor) {
+      this.modalRequisitoCotejo = valor;
     },
   },
 });

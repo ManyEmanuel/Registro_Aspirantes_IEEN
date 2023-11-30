@@ -172,7 +172,10 @@
         </div>
         <br />
 
-        <div class="text-right q-gutter-xs">
+        <div
+          v-if="modulo == null ? false : modulo.registrar"
+          class="text-right q-gutter-xs"
+        >
           <q-btn
             icon-right="add"
             :disable="botonParticipacion"
@@ -186,7 +189,7 @@
       <br />
       <q-separator style="width: 100%" color="purple" size="2px" />
       <br />
-      <TablaCurso />
+      <TablaCurso v-if="modulo == null ? false : modulo.leer" />
       <br />
     </q-card-section>
   </q-card>
@@ -197,8 +200,11 @@ import { useQuasar, date } from "quasar";
 import { ref, onBeforeMount, watch } from "vue";
 import { useDatosCiudadanosStore } from "../../../store/datos_ciudadanos_store";
 import TablaCurso from "./TablaCurso.vue";
+import { useAuthStore } from "../../../store/auth_store";
 
 const datosCiudadanosStore = useDatosCiudadanosStore();
+const authStore = useAuthStore();
+const { modulo } = storeToRefs(authStore);
 const {
   publicaciones_Participaciones,
   list_publicaciones_Participaciones,

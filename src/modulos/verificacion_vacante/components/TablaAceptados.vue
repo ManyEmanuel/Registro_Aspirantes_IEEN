@@ -14,7 +14,8 @@
   <div class="row">
     <div class="col">
       <q-table
-        :rows="listaCompletos"
+        id="MiTabla"
+        :rows="listaAceptados"
         :columns="columns"
         :filter="filter"
         :loading="loading"
@@ -56,24 +57,24 @@
                   <q-tooltip>Ver documentación</q-tooltip>
                 </q-btn>
                 <q-btn
-                  v-if="props.row.estatus === 'Registro terminado'"
+                  v-if="props.row.estatus == 'Registro aprobado'"
                   flat
                   round
                   color="purple-ieen"
-                  icon="check"
-                  @click="aceptarRegistro(col.value)"
+                  icon="event"
+                  @click="agendar(col.value)"
                 >
-                  <q-tooltip> Aprobar registro</q-tooltip>
+                  <q-tooltip> Agendar cita</q-tooltip>
                 </q-btn>
                 <q-btn
-                  v-if="props.row.estatus === 'Registro terminado'"
+                  v-if="props.row.estatus == 'Entrevista'"
                   flat
                   round
                   color="purple-ieen"
-                  icon="cancel"
-                  @click="rechazarRegistro(col.value)"
+                  icon="find_in_page"
+                  @click="cotejo(col.value)"
                 >
-                  <q-tooltip> Rechazar registro</q-tooltip>
+                  <q-tooltip> Citar a cotejo</q-tooltip>
                 </q-btn>
               </div>
 
@@ -103,13 +104,13 @@ const router = useRouter();
 const verificacionVacanteStore = useVerificacionVacante();
 const registroVacanteStore = useRegistroVacante();
 const { listaOficina } = storeToRefs(registroVacanteStore);
-const { listaCompletos } = storeToRefs(verificacionVacanteStore);
+const { listaAceptados } = storeToRefs(verificacionVacanteStore);
 let listaBusquedaOficina = listaOficina.value;
 let verificación = listaBusquedaOficina.find((x) => x.value == 0);
 if (verificación == undefined) {
   listaBusquedaOficina.unshift({ label: "Ver todos", value: 0 });
 }
-let listaTablaCompletos = listaCompletos.value;
+let listaTablaCotejo = listaAceptados.value;
 const oficinaId = ref();
 
 const columns = [
@@ -169,17 +170,17 @@ const filter = ref("");
 
 watch(oficinaId, (val) => {
   if (val.value != 0) {
-    let listaFiltrada = listaTablaCompletos.filter(
-      (x) => x.oficina == val.label
-    );
-    listaCompletos.value = listaFiltrada;
+    let listaFiltrada = listaTablaCotejo.filter((x) => x.oficina == val.label);
+    listaAceptados.value = listaFiltrada;
   } else {
-    listaCompletos.value = listaTablaCompletos;
+    listaAceptados.value = listaTablaCotejo;
   }
 });
 
+//
+
 const verDocumentacion = async (solicitud, vacante, usuario) => {
-  await verificacionVacanteStore.loadPostulantesFiltrados(listaCompletos.value);
+  await verificacionVacanteStore.loadPostulantesFiltrados(listaAceptados.value);
   await verificacionVacanteStore.loadInformacionUsuario(usuario);
   router.push({
     path: "/Datos_Postulado",
@@ -187,75 +188,11 @@ const verDocumentacion = async (solicitud, vacante, usuario) => {
   });
 };
 
-const aceptarRegistro = async (id) => {
-  $q.dialog({
-    title: "Aceptar registro",
-    message: "¿Está seguro de aceptar el registro?",
-    icon: "Warning",
-    persistent: true,
-    transitionShow: "scale",
-    transitionHide: "scale",
-    ok: {
-      color: "positive",
-      label: "¡Sí!, aceptar",
-    },
-    cancel: {
-      color: "negative",
-      label: " No Cancelar",
-    },
-  }).onOk(async () => {
-    $q.loading.show();
-    const resp = await verificacionVacanteStore.aceptarRegistro(id);
-    if (resp.success) {
-      $q.loading.hide();
-      $q.notify({
-        type: "positive",
-        message: resp.data,
-      });
-      await verificacionVacanteStore.loadPostulantes(route.query.id);
-    } else {
-      $q.loading.hide();
-      $q.notify({
-        type: "negative",
-        message: resp.data,
-      });
-    }
-  });
+const agendar = async (id) => {
+  verificacionVacanteStore.actualizarModalAgenda(true, id);
 };
 
-const rechazarRegistro = async (id) => {
-  $q.dialog({
-    title: "Rechazar registro",
-    message: "¿Está seguro de rechazar el registro?",
-    icon: "Warning",
-    persistent: true,
-    transitionShow: "scale",
-    transitionHide: "scale",
-    ok: {
-      color: "positive",
-      label: "¡Sí!, rechazar",
-    },
-    cancel: {
-      color: "negative",
-      label: " No Cancelar",
-    },
-  }).onOk(async () => {
-    $q.loading.show();
-    const resp = await verificacionVacanteStore.rechazarRegistro(id);
-    if (resp.success) {
-      $q.loading.hide();
-      $q.notify({
-        type: "positive",
-        message: resp.data,
-      });
-      await verificacionVacanteStore.loadPostulantes(route.query.id);
-    } else {
-      $q.loading.hide();
-      $q.notify({
-        type: "negative",
-        message: resp.data,
-      });
-    }
-  });
+const cotejo = async (id) => {
+  verificacionVacanteStore.actualizarModalCotejo(true, id);
 };
 </script>

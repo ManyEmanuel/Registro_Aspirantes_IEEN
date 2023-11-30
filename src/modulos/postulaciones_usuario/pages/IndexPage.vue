@@ -23,6 +23,7 @@
         class="col-lg-4 col-md-6 col-sm-6 col-xs-12 q-pa-lg"
       >
         <q-card
+          v-if="modulo == null ? false : modulo.leer"
           id="cartaTour"
           class="my-card q-hoverable text-center"
           style="width: 100%"
@@ -53,6 +54,7 @@
           <q-item class="text-center">
             <q-item-section id="verTour" class="text-center">
               <q-btn
+                v-if="modulo == null ? false : modulo.registrar"
                 label="Ver postulación"
                 color="purple"
                 icon="visibility"
@@ -92,7 +94,11 @@ import { useRegistroVacante } from "../../../store/registro_vacantes_store";
 import { useDatosCiudadanosStore } from "../../../store/datos_ciudadanos_store";
 import introJs from "intro.js";
 import "intro.js/introjs.css";
+import { useAuthStore } from "../../../store/auth_store";
 
+const authStore = useAuthStore();
+const { modulo } = storeToRefs(authStore);
+const siglas = "SRV-REG-MS";
 const $q = useQuasar();
 const router = useRouter();
 const postulacionesUsuarioStore = usePostulacionesUsuario();
@@ -107,6 +113,7 @@ const listMunicipio = ref();
 let vacante_Id = null;
 
 onBeforeMount(() => {
+  leerPermisos();
   postulacionesUsuarioStore.loadPostulaciones();
 });
 
@@ -117,6 +124,11 @@ const verAvance = async (id) => {
   //await registroVacanteStore.loadVacante(id);
   //await postulacionesUsuarioStore.loadAvancePostulacion(id);
   router.push({ path: "/postulacion", query: { id: id } });
+};
+const leerPermisos = async () => {
+  $q.loading.show();
+  await authStore.loadModulo(siglas);
+  $q.loading.hide();
 };
 
 const startIntro = () => {

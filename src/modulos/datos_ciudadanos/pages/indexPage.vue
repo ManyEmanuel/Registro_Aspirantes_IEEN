@@ -17,7 +17,7 @@
         id="fotoTour"
         class="col-lg-12 col-md-12 col-sm-12 col-xs-12 q-pa-xs q-gutter-sm"
       >
-        <q-card class="my-card">
+        <q-card v-if="modulo == null ? false : modulo.leer" class="my-card">
           <q-card-section horizontal>
             <q-img
               :src="
@@ -39,7 +39,11 @@
         </q-card>
       </div>
       <div id="rubroTour" class="col-lg-6 col-md-6 col-sm-12 col-xs-12 q-pa-xs">
-        <q-card id="datosTour" class="my-card">
+        <q-card
+          v-if="modulo == null ? false : modulo.registrar"
+          id="datosTour"
+          class="my-card"
+        >
           <q-list>
             <q-item-label class="text-center" header
               >Datos registrados</q-item-label
@@ -67,7 +71,10 @@
         id="avanceTour"
         class="col-lg-6 col-md-6 col-sm-12 col-xs-12 q-pa-xs"
       >
-        <q-card class="my-card">
+        <q-card
+          v-if="modulo == null ? false : modulo.registrar"
+          class="my-card"
+        >
           <q-item-label class="text-center" header
             >Avance de registro de datos</q-item-label
           >
@@ -88,28 +95,6 @@
           </q-linear-progress>
         </q-card>
       </div>
-      <!--<div
-        v-if="checkComplete"
-        class="col-lg-6 col-md-6 col-sm-12 col-xs-12 q-pa-xl"
-      >
-        <q-list bordered>
-          <q-item-label class="text-center" header
-            >Formatos de entrega</q-item-label
-          >
-          <q-item
-            v-for="items in opcionesFormatos"
-            :key="items.id"
-            clickable
-            v-ripple
-            @click="generarFormato(items.codigo)"
-          >
-            <q-item-section>{{ items.nombre }}</q-item-section>
-            <q-item-section avatar>
-              <q-avatar color="accent" text-color="white" icon="download" />
-            </q-item-section>
-          </q-item>
-        </q-list>
-      </div>-->
     </div>
     <ModalComp />
   </q-page>
@@ -119,6 +104,7 @@ import { useQuasar } from "quasar";
 import { useDatosCiudadanosStore } from "../../../store/datos_ciudadanos_store";
 import { onBeforeMount, ref } from "vue";
 import { storeToRefs } from "pinia";
+import { useAuthStore } from "../../../store/auth_store";
 import ModalComp from "../components/ModalComp.vue";
 import introJs from "intro.js";
 import "intro.js/introjs.css";
@@ -126,6 +112,9 @@ import "intro.js/introjs.css";
 //import ReporteSCME01 from "../../../helpers/SCME-F01";
 
 const $q = useQuasar();
+const authStore = useAuthStore();
+const { modulo } = storeToRefs(authStore);
+const siglas = "SRV-REG-MP";
 const datosCiudadanosStore = useDatosCiudadanosStore();
 let {
   personalesCheck,
@@ -162,26 +151,8 @@ const opcionesDatos = ref([
   },
 ]);
 
-const opcionesFormatos = ref([
-  {
-    nombre: "Formato CME-F01",
-    codigo: 1,
-  },
-  {
-    nombre: "Formato CME-F02",
-    codigo: 2,
-  },
-  {
-    nombre: "Formato CME-F03",
-    codigo: 3,
-  },
-]);
-//let filter = opcionesDatos.value.filter((x) => x.estatus == true);
-//let total = filter.length / opcionesDatos.value.length;
-//const avanceBarra = ref(total);
-//const avanceLetra = ref((total * 100).toFixed(2) + "%");
-
 onBeforeMount(() => {
+  leerPermisos();
   cargarDatos();
 });
 
@@ -194,24 +165,9 @@ const cargarDatos = async () => {
 
 const leerPermisos = async () => {
   $q.loading.show();
-
+  await authStore.loadModulo(siglas);
   $q.loading.hide();
 };
-
-const generarFormato = async (codigo) => {
-  $q.loading.show();
-  if (codigo == 1) {
-    ReporteCME01();
-  } else if (codigo == 2) {
-    ReporteCME02();
-  } else if (codigo == 3) {
-    ReporteCME03();
-  }
-
-  $q.loading.hide();
-};
-
-const llenadoBarra = async () => {};
 
 const actualizarModal = (valor) => {
   $q.loading.show();
