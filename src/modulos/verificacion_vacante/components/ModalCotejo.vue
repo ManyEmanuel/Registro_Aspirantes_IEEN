@@ -53,6 +53,7 @@
                       <q-time
                         v-model="cotejo.fecha_Cotejo"
                         mask="YYYY-MM-DD HH:mm"
+                        :hour-options="[8, 9, 10, 11, 12, 13, 14, 15, 16, 17]"
                         color="purple"
                         format24h
                       >
@@ -69,6 +70,14 @@
                   </q-icon>
                 </template>
               </q-input>
+            </div>
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+              <q-select
+                v-model="cotejo.direccion_Cotejo"
+                label="Lugar de cotejo"
+                :options="opcionesUbicacion"
+                :rules="[(val) => !!val || 'El lugar de cotejo es requerido']"
+              ></q-select>
             </div>
           </div>
           <br />
@@ -110,6 +119,10 @@ const verificacionVacanteStore = useVerificacionVacante();
 const datosCiudadanosStore = useDatosCiudadanosStore();
 const { modalCotejo, cotejo } = storeToRefs(verificacionVacanteStore);
 const { myLocale } = storeToRefs(datosCiudadanosStore);
+const opcionesUbicacion = ref([
+  "Magnolia #19, entre Av. Jacarandas y Calle Paraíso, Colonia San Juan, Tepic, Nayarit",
+  "Av. Country Club #13, esquina con Caoba, Colonia Versalles, Tepic, Nayarit",
+]);
 //const opcionesTipo = ref(["Virtual", "Presencial"]);
 //const opcionesConsumibles = ref([...listaConsumibles.value]);
 
@@ -120,43 +133,72 @@ const actualizarModal = (valor) => {
 
 const onSubmit = async () => {
   if (cotejo.value.fecha_Cotejo != null && cotejo.value.fecha_Cotejo != "") {
-    let resp = null;
-    $q.dialog({
-      title: "Asignar cotejo",
-      message:
-        "La fecha y hora " + cotejo.value.fecha_Cotejo + " sera asignada",
-      icon: "Warning",
+    const fechaString = cotejo.value.fecha_Cotejo;
+    let fechaValida = false;
+    const [fechaParte, horaParte] = fechaString.split(" ");
+    const [year, month, day] = fechaParte.split("-");
+    const [horas, minutos] = horaParte.split(":");
+    const date = new Date(year, month - 1, day, horas, minutos);
+    const hours = date.getHours();
+    const minutes = date.getMinutes();
 
-      persistent: true,
-      transitionShow: "scale",
-      transitionHide: "scale",
-      ok: {
-        color: "positive",
-        label: "Aceptar",
-      },
-      cancel: {
-        color: "negative",
-        label: " Cancelar",
-      },
-    }).onOk(async (data) => {
-      $q.loading.show();
-      resp = await verificacionVacanteStore.agendarCotejo(cotejo.value);
-      $q.loading.hide();
-      if (resp.success) {
-        $q.notify({
-          type: "positive",
-          message: resp.data,
-        });
-        await verificacionVacanteStore.loadPostulantes(route.query.id);
-        actualizarModal(false);
-      } else {
-        $q.notify({
-          type: "negative",
-          message: resp.data,
-        });
-        //loading.value = false;
-      }
-    });
+    if (hours >= 8 && hours < 17) {
+      fechaValida = true;
+    } else if (hours === 17 && minutes === 0) {
+      fechaValida = true;
+    } else {
+      fechaValida = false;
+    }
+
+    if (fechaValida == true) {
+      let resp = null;
+      $q.dialog({
+        title: "Asignar cotejo",
+        message:
+          "La fecha y hora <strong> " +
+          cotejo.value.fecha_Cotejo +
+          " </strong> será asignada, con domicilio en <strong>" +
+          cotejo.value.direccion_Cotejo +
+          " </strong>",
+        icon: "Warning",
+        html: true,
+        persistent: true,
+        transitionShow: "scale",
+        transitionHide: "scale",
+        ok: {
+          color: "positive",
+          label: "Aceptar",
+        },
+        cancel: {
+          color: "negative",
+          label: " Cancelar",
+        },
+      }).onOk(async (data) => {
+        $q.loading.show();
+        resp = await verificacionVacanteStore.agendarCotejo(cotejo.value);
+        $q.loading.hide();
+        if (resp.success) {
+          $q.notify({
+            type: "positive",
+            message: resp.data,
+          });
+          await verificacionVacanteStore.loadPostulantes(route.query.id);
+          actualizarModal(false);
+        } else {
+          $q.notify({
+            type: "negative",
+            message: resp.data,
+          });
+          //loading.value = false;
+        }
+      });
+    } else {
+      $q.notify({
+        type: "negative",
+        message: "Hora fuera de rango ( <strong> 08:00 a 17:00 </strong>)",
+        html: true,
+      });
+    }
   } else {
     $q.notify({
       type: "negative",

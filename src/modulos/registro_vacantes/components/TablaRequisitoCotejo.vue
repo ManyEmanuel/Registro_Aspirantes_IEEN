@@ -10,11 +10,24 @@
         row-key="id"
         rows-per-page-label="Filas por pagina"
         no-data-label="No hay registros"
+        visible-columns="corto,id"
       >
         <template v-slot:body="props">
           <q-tr :props="props">
             <q-td v-for="col in props.cols" :key="col.name" :props="props">
-              <div v-if="col.name === 'id'">
+              <div v-if="col.name === 'corto'">
+                <q-btn
+                  size="sm"
+                  round
+                  dense
+                  @click="props.expand = !props.expand"
+                  :icon="props.expand ? 'remove' : 'add'"
+                >
+                  <q-tooltip>Ver información completa</q-tooltip>
+                </q-btn>
+                {{ col.value }}
+              </div>
+              <div v-else-if="col.name === 'id'">
                 <q-btn
                   v-if="modulo == null ? false : modulo.eliminar"
                   flat
@@ -36,8 +49,17 @@
                   <q-tooltip>Editar requisito</q-tooltip>
                 </q-btn>
               </div>
-
-              <label v-else>{{ col.value }}</label>
+            </q-td>
+          </q-tr>
+          <q-tr v-show="props.expand" :props="props">
+            <q-td colspan="100%">
+              <div class="text-left">
+                <strong>Nombre del requisito: </strong>
+                {{ props.row.nombre }}
+                <br />
+                <strong>Descripción del requisito: </strong>
+                {{ props.row.descripcion }}
+              </div>
             </q-td>
           </q-tr>
         </template>
@@ -67,6 +89,21 @@ onBeforeMount(() => {
 
 const columns = [
   {
+    name: "corto",
+    align: "center",
+    label: "Nombre Corto",
+    field: "nombreCorto",
+    align: "left",
+    sortable: true,
+  },
+  {
+    name: "id",
+    align: "center",
+    label: "Opciones",
+    field: "id",
+    sortable: false,
+  },
+  {
     name: "nombre",
     align: "center",
     label: "Nombre del requisito",
@@ -79,14 +116,6 @@ const columns = [
     label: "Descripción del requisito",
     field: "descripcion",
     sortable: true,
-  },
-
-  {
-    name: "id",
-    align: "center",
-    label: "Opciones",
-    field: "id",
-    sortable: false,
   },
 ];
 

@@ -45,6 +45,7 @@ export const useVerificacionVacante = defineStore("verificacionVacante", {
     cotejo: {
       id: null,
       fecha_Cotejo: null,
+      direccion_Cotejo: null,
     },
   }),
 
@@ -82,6 +83,7 @@ export const useVerificacionVacante = defineStore("verificacionVacante", {
     initCotejo() {
       this.cotejo.id = null;
       this.cotejo.fecha_Cotejo = null;
+      this.cotejo.direccion_Cotejo = null;
     },
 
     async loadPostulantes(id) {
@@ -104,6 +106,7 @@ export const useVerificacionVacante = defineStore("verificacionVacante", {
             fecha_Registro: postulantes.fecha_Registro,
             estatus: postulantes.estatus,
             fecha_Cotejo: postulantes.fecha_Cotejo,
+            direccion_Cotejo: postulantes.direccion_Cotejo,
           };
         });
 

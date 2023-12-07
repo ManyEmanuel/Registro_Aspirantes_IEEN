@@ -323,8 +323,18 @@ export const useRegistroVacante = defineStore("registroVacante", {
         let { data } = resp.data;
         console.log("Esto es data de cotejo", data);
         let listRequisitos = data.map((cotejo) => {
+          let primerFiltro = cotejo.nombre.split(" ");
+          let nombreCorto = "";
+          if (primerFiltro.length >= 15) {
+            const segundoFiltro = primerFiltro.slice(0, 14) + "...";
+            const finalFiltro = segundoFiltro.replace(/,/g, " ");
+            nombreCorto = finalFiltro;
+          } else {
+            nombreCorto = cotejo.nombre;
+          }
           return {
             id: cotejo.id,
+            nombreCorto: nombreCorto,
             nombre: cotejo.nombre,
             descripcion: cotejo.descripcion,
           };

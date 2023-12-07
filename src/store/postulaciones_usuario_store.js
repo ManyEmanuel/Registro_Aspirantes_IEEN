@@ -88,6 +88,7 @@ export const usePostulacionesUsuario = defineStore("postulacionesUsuario", {
             descripcion: vacantes.descripcion,
             convocatoria_Url: vacantes.convocatoria_Url,
             estatus: vacantes.estatus,
+            direccion_Cotejo: vacantes.direccion_Cotejo,
             folio: vacantes.folio,
             tipo_Entrevista: vacantes.tipo_Entrevista,
             fecha_Entrevista: vacantes.fecha_Entrevista,

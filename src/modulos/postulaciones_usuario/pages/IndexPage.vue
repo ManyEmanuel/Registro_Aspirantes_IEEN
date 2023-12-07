@@ -49,6 +49,12 @@
                   item.estatus
                 }}</q-badge>
               </q-item-label>
+              <q-item-label
+                v-if="item.estatus == 'Cotejo documental'"
+                class="text-h6"
+              >
+                Cotejo en {{ item.direccion_Cotejo }}
+              </q-item-label>
             </q-item-section>
           </q-item>
           <q-item class="text-center">

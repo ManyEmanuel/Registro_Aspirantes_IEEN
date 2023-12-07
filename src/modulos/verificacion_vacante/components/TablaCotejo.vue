@@ -156,6 +156,13 @@ const columns = [
     sortable: true,
   },
   {
+    name: "direccion_Cotejo",
+    align: "center",
+    label: "Dirección de Cotejo",
+    field: "direccion_Cotejo",
+    sortable: true,
+  },
+  {
     name: "id",
     align: "center",
     label: "Opciones",

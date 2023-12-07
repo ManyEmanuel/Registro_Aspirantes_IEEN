@@ -10,7 +10,7 @@ import { EncryptStorage } from "storage-encryption";
 const encryptStorage = new EncryptStorage("SECRET_KEY", "sessionStorage");
 const api = axios.create({
   //baseURL: "http://sistema.ieenayarit.org:9370/api",
-  baseURL: "http://sistema.ieenayarit.org:9370/api",
+  baseURL: "http://sistema.ieenayarit.org:9470/api",
   //http://ieen.ieenayarit.org:9470/
 });
 //const api = axios.create({ baseURL: "https://sistema.ieenayarit.org:9270/api" });
@@ -30,21 +30,10 @@ api.interceptors.response.use(
       alert("Su sesión ha expirado, sera redireccionado al logín");
       window.localStorage.clear();
       //window.location = "http://sistema.ieenayarit.org:9471?return=false";
-      window.location = "http://sistema.ieenayarit.org:9371/";
+      window.location = "http://sistema.ieenayarit.org:9471/";
     }
     return Promise.reject(error);
   }
 );
-/*api.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    if (error.response.status == 401) {
-      alert("Su sesión ha expirado, sera redireccionado al logín");
-      localStorage.clear();
-      window.location = "http://sistema.ieenayarit.org:9171?return=false";
-    }
-    return Promise.reject();
-  }
-);*/
 
 export { api };

@@ -241,7 +241,7 @@ export default defineComponent({
         }
       } else {
         window.localStorage.clear();
-        window.location = "http://sistema.ieenayarit.org:9371/";
+        window.location = "http://sistema.ieenayarit.org:9471/";
       }
     };
 
@@ -253,9 +253,9 @@ export default defineComponent({
       }).onOk((action) => {
         if (action.label == "Cerrar sesión") {
           localStorage.clear();
-          window.location = "http://sistema.ieenayarit.org:9371/";
+          window.location = "http://sistema.ieenayarit.org:9471/";
         } else if (action.label == "Ir a universo") {
-          window.location = "http://sistema.ieenayarit.org:9371/";
+          window.location = "http://sistema.ieenayarit.org:9471/";
         } else {
           window.location =
             action.url +
